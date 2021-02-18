@@ -1,0 +1,152 @@
+@article{8118483,
+  author={L. {Wagner}},
+  journal={IEEE Spectrum}, 
+  title={Turbocharging the web}, 
+  year={2017},
+  volume={54},
+  number={12},
+  pages={48-53},
+  doi={10.1109/MSPEC.2017.8118483}}
+
+@inproceedings{10.1145/3062341.3062363,
+author = {Haas, Andreas and Rossberg, Andreas and Schuff, Derek L. and Titzer, Ben L. and Holman, Michael and Gohman, Dan and Wagner, Luke and Zakai, Alon and Bastien, JF},
+title = {Bringing the Web up to Speed with {W}eb{A}ssembly},
+year = {2017},
+isbn = {9781450349888},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3062341.3062363},
+doi = {10.1145/3062341.3062363},
+abstract = { The maturation of the Web platform has given rise to sophisticated and demanding Web applications such as interactive 3D visualization, audio and video software, and games. With that, efficiency and security of code on the Web has become more important than ever. Yet JavaScript as the only built-in language of the Web is not well-equipped to meet these requirements, especially as a compilation target.  Engineers from the four major browser vendors have risen to the challenge and collaboratively designed a portable low-level bytecode called WebAssembly. It offers compact representation, efficient validation and compilation, and safe low to no-overhead execution. Rather than committing to a specific programming model, WebAssembly is an abstraction over modern hardware, making it language-, hardware-, and platform-independent, with use cases beyond just the Web. WebAssembly has been designed with a formal semantics from the start. We describe the motivation, design and formal semantics of WebAssembly and provide some preliminary experience with implementations. },
+booktitle = {Proceedings of the 38th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {185–200},
+numpages = {16},
+keywords = {type systems, virtual machines, just-in-time compilers, assembly languages, programming languages},
+location = {Barcelona, Spain},
+series = {PLDI 2017}
+}
+
+@inproceedings{10.1145/3167082,
+author = {Watt, Conrad},
+title = {Mechanising and Verifying the {W}eb{A}ssembly Specification},
+year = {2018},
+isbn = {9781450355865},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3167082},
+doi = {10.1145/3167082},
+abstract = {WebAssembly is a new low-level language currently being implemented in all major web browsers. It is designed to become the universal compilation target for the web, obsoleting existing solutions in this area, such as asm.js and Native Client. The WebAssembly working group has incorporated formal techniques into the development of the language, but their efforts so far have focussed on pen and paper formal specification.We present a mechanised Isabelle specification for the WebAssembly language, together with a verified executable interpreter and type checker. Moreover, we present a fully mechanised proof of the soundness of the WebAssembly type system, and detail how our work on this proof has exposed several issues with the official WebAssembly specification, influencing its development. Finally, we give a brief account of our efforts in performing differential fuzzing of our interpreter against industry implementations.},
+booktitle = {Proceedings of the 7th ACM SIGPLAN International Conference on Certified Programs and Proofs},
+pages = {53–65},
+numpages = {13},
+keywords = {bytecode, stack machine, soundness, reduction},
+location = {Los Angeles, CA, USA},
+series = {CPP 2018}
+}
+
+@inproceedings{10.1145/2048147.2048224,
+author = {Zakai, Alon},
+title = {Emscripten: An {LLVM}-to-{J}ava{S}cript Compiler},
+year = {2011},
+isbn = {9781450309424},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2048147.2048224},
+doi = {10.1145/2048147.2048224},
+abstract = {We present Emscripten, a compiler from LLVM (Low Level Virtual Machine) assembly to JavaScript. This opens up two avenues for running code written in languages other than JavaScript on the web: (1) Compile code directly into LLVM assembly, and then compile that into JavaScript using Emscripten, or (2) Compile a language's entire runtime into LLVM and then JavaScript, as in the previous approach, and then use the compiled runtime to run code written in that language. For example, the former approach can work for C and C++, while the latter can work for Python; all three examples open up new opportunities for running code on the web.Emscripten itself is written in JavaScript and is available under the MIT license (a permissive open source license), at http://www.emscripten.org. As a compiler from LLVM to JavaScript, the challenges in designing Emscripten are somewhat the reverse of the norm - one must go from a low-level assembly into a high-level language, and recreate parts of the original high-level structure of the code that were lost in the compilation to low-level LLVM. We detail the methods used in Emscripten to deal with those challenges, and in particular present and prove the validity of Emscripten's Relooper algorithm, which recreates high-level loop structures from low-level branching data.},
+booktitle = {Proceedings of the ACM International Conference Companion on Object Oriented Programming Systems Languages and Applications Companion},
+pages = {301–312},
+numpages = {12},
+keywords = {llvm, javascript, decompiler},
+location = {Portland, Oregon, USA},
+series = {OOPSLA '11}
+}
+
+@inproceedings{234914,
+author = {Abhinav Jangda and Bobby Powers and Emery D. Berger and Arjun Guha},
+title = {Not So Fast: Analyzing the Performance of {W}eb{A}ssembly vs. Native Code},
+booktitle = {2019 {USENIX} Annual Technical Conference ({USENIX} {ATC} 19)},
+year = {2019},
+isbn = {978-1-939133-03-8},
+address = {Renton, WA},
+pages = {107--120},
+url = {https://www.usenix.org/conference/atc19/presentation/jangda},
+publisher = {{USENIX} Association},
+month = jul,
+}
+
+@masterthesis{llvm-thesis,
+  author  = {Chris Lattner},
+  title   = "{LLVM: An Infrastructure for Multi-Stage Optimization}",
+  school  = "{Computer Science Dept., University of Illinois at Urbana-Champaign}",
+  year    = {2002},
+  address = {Urbana, IL},
+  month   = {Dec}
+}
+
+@inproceedings{adler32-paper,
+  author={C. {Fetzer}},
+  booktitle={International Conference on Dependable Systems and Networks (DSN'06)}, 
+  title={Student Forum}, 
+  year={2006},
+  volume={},
+  number={},
+  pages={594-594},
+  doi={10.1109/DSN.2006.68}}
+
+@article{ibm-ssa,
+author = {Cytron, Ron and Ferrante, Jeanne and Rosen, Barry K. and Wegman, Mark N. and Zadeck, F. Kenneth},
+title = {Efficiently Computing Static Single Assignment Form and the Control Dependence Graph},
+year = {1991},
+issue_date = {Oct. 1991},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {13},
+number = {4},
+issn = {0164-0925},
+url = {https://doi.org/10.1145/115372.115320},
+doi = {10.1145/115372.115320},
+journal = {ACM Trans. Program. Lang. Syst.},
+month = oct,
+pages = {451–490},
+numpages = {40},
+keywords = {def-use chain, optimizing compilers, control flow graph, control dependence, dominator}
+}
+
+@inproceedings{trufflewasm,
+author = {Salim, Salim S. and Nisbet, Andy and Luj\'{a}n, Mikel},
+title = {TruffleWasm: A WebAssembly Interpreter on GraalVM},
+year = {2020},
+isbn = {9781450375542},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3381052.3381325},
+doi = {10.1145/3381052.3381325},
+abstract = {WebAssembly is a binary format originally designed for web-based deployment and execution combined with JavaScript. WebAssembly can also be used for standalone programs provided a WebAssembly runtime environment is available.This paper describes the design and implementation of TruffleWasm, a guest language implementation of a WebAssembly hosted on Truffle and GraalVM. Truffle is a Java framework capable of constructing and interpreting an Abstract Syntax Tree (AST) representing a program on standard JVMs. GraalVM is a JVM with a JIT compiler which optimises the execution of ASTs from Truffle.Our work is motivated by trying to understand the advantages and disadvantages of using GraalVM, and its support for multiple programming languages, to build a standalone WebAssembly runtime. This contrast with developing a new runtime, as Wasmtime and other projects are undertaking. TruffleWasm can execute standalone WebAssembly modules, while offering also interoperability with other GraalVM hosted languages, such as Java, JavaScript, R, Python and Ruby.The experimental results compare the peak performance of TruffleWasm to the standalone Wasmtime runtime for the Shootout, C benchmarks in JetStream, and the Poly-BenchC benchmarks. The results show the geo-mean peak performance of TruffleWasm is 4% slower than Wasmtime for Shootout/JetStream, and 4% faster for PolyBenchC.},
+booktitle = {Proceedings of the 16th ACM SIGPLAN/SIGOPS International Conference on Virtual Execution Environments},
+pages = {88–100},
+numpages = {13},
+keywords = {WebAssembly, JVM, just in time compilation, Wasm, GraalVM},
+location = {Lausanne, Switzerland},
+series = {VEE '20}
+}
+
+
+% On the Use of Web Assembly in a Serverless Context
+@InProceedings{10.1007/978-3-030-58858-8_15,
+author="Murphy, Se{\'a}n
+and Persaud, Leonardas
+and Martini, William
+and Bosshard, Bill",
+editor="Paasivaara, Maria
+and Kruchten, Philippe",
+title="On the Use of Web Assembly in a Serverless Context",
+booktitle="Agile Processes in Software Engineering and Extreme Programming -- Workshops",
+year="2020",
+publisher="Springer International Publishing",
+address="Cham",
+pages="141--145",
+abstract="This paper considers how WASM can be run in different serverless contexts. A comparison of different serverside WASM runtime options is considered, specifically focused on wasmer, wasmtime and lucet. Next, different options for running WASM within two serverless platforms -- Openwhisk and AWS Lambdai -- are compared. Initial results show that a solution which uses the built-in node.js WASM supports is found to work better than using the dedicated WASM runtimes but this has limitations and providing more direct integration with WASM runtimes should be explored further.",
+isbn="978-3-030-58858-8"
+}
+
