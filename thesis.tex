@@ -35,17 +35,17 @@
 }
 
 \title{
-{TITLE}\\~\\~\\
-{\large NAME, School of Computer Science \\ 
+{SABLEWASM: A STATIC COMPILER AND RUNTIME FOR WEBASSEMBLY}\\~\\~\\
+{\large Hongji Chen, School of Computer Science \\ 
 	McGill University, Montreal \\ 
-	MONTH, YEAR \\~\\~\\
+	August, 2021 \\~\\~\\
 	A thesis submitted to McGill University in partial fulfillment of the 
 	requirements of the degree of \\~\\ Master of Computer Science }\\~\\
 }
 
 \setcounter{page}{2}\renewcommand{\thepage}{\roman{page}}
 
-\author{\textcopyright AUTHOR, DATE}
+\author{\textcopyright Hongji Chen, 2021}
 \date{}
 
 \begin{document}
@@ -55,17 +55,17 @@
 \chapter*{Abstract}
 \label{sec:engAbstract}
 \addcontentsline{toc}{section}{\nameref{sec:engAbstract}}
-ABSTRACT HERE
+\input{Abstract-EN}
 
 \chapter*{Abrégé}
 \label{sec:frAbstract}
 \addcontentsline{toc}{section}{\nameref{sec:frAbstract}}
-
+\input{Abstract-FR}
 
 \chapter*{Acknowledgements}
 \label{sec:ded}
 \addcontentsline{toc}{section}{\nameref{sec:ded}}
-
+\input{Acknowledgements}
 
 \tableofcontents
 \listoffigures %
@@ -76,11 +76,15 @@ ABSTRACT HERE
 \clearpage 
 \pagenumbering{arabic} % restart page numbers at one, now in arabic style
 
-
 %% start of chapters
-\input{Chapters/1.Background.tex}
-\input{Chapters/2.Frontend.tex}
-
+\input{Chapters/1.Introduction}
+\input{Chapters/2.Background}
+\input{Chapters/3.Frontend}
+\input{Chapters/4.MIR}
+\input{Chapters/5.Backend and Runtime}
+\input{Chapters/6.Evaluation}
+\input{Chapters/7.Future Work}
+\input{Chapters/8.Conclusion}
 
 \bibliography{references}
 \bibliographystyle{acm}

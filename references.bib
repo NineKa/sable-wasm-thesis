@@ -131,6 +131,64 @@ location = {Lausanne, Switzerland},
 series = {VEE '20}
 }
 
+@inproceedings{auto-vec-gcc,
+  author={D. {Nuzman} and R. {Henderson}},
+  booktitle={International Symposium on Code Generation and Optimization (CGO'06)}, 
+  title={Multi-platform auto-vectorization}, 
+  year={2006},
+  volume={},
+  number={},
+  pages={11 pp.-294},
+  doi={10.1109/CGO.2006.25}}
+
+@ARTICLE{sse-intel,
+  author={S. K. {Raman} and V. {Pentkovski} and J. {Keshava}},
+  journal={IEEE Micro}, 
+  title={Implementing streaming SIMD extensions on the Pentium III processor}, 
+  year={2000},
+  volume={20},
+  number={4},
+  pages={47-57},
+  doi={10.1109/40.865866}}
+
+@inproceedings{arm-neon,
+author = {Jang, Minwoo and Kim, Kukhyun and Kim, Kanghee},
+title = {The Performance Analysis of ARM NEON Technology for Mobile Platforms},
+year = {2011},
+isbn = {9781450310871},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2103380.2103401},
+doi = {10.1145/2103380.2103401},
+abstract = {Mobile platforms have compute-bound applications, which will be executed on top of ARM processors in many cases. For such applications, the use of the ARM NEON technology should be considered since it can significantly increase the computing power of the underlying processor for vector operations. The ARM NEON technology is a media processing architecture based on SIMD (Single Instruction Multiple Data) that adds instructions targeted primarily for audio, video, and 3-D graphics processing. In this paper, we evaluate the ARM NEON technology in ARM Cortex-A8 processor for several open-source applications. To do this, we use the auto-vectorization feature of the ARM GCC compiler, which is implemented with the NEON technology. The evaluation criteria include program code size, execution time and power consumption, which are crucial in most embedded systems.},
+booktitle = {Proceedings of the 2011 ACM Symposium on Research in Applied Computation},
+pages = {104–106},
+numpages = {3},
+keywords = {SIMD, NEON technology, embedded system, ARM cortex-A8, mobile platform},
+location = {Miami, Florida},
+series = {RACS '11}
+}
+
+@InProceedings{webassembly-survey,
+author="Musch, Marius
+and Wressnegger, Christian
+and Johns, Martin
+and Rieck, Konrad",
+editor="Perdisci, Roberto
+and Maurice, Cl{\'e}mentine
+and Giacinto, Giorgio
+and Almgren, Magnus",
+title="New Kid on the Web: A Study on the Prevalence of WebAssembly in the Wild",
+booktitle="Detection of Intrusions and Malware, and Vulnerability Assessment",
+year="2019",
+publisher="Springer International Publishing",
+address="Cham",
+pages="23--42",
+abstract="WebAssembly, or Wasm for short, is a new, low-level language that allows for near-native execution performance and is supported by all major browsers as of today. In comparison to JavaScript it offers faster transmission, parsing, and execution times. Up until now it has, however, been largely unclear what WebAssembly is used for in the wild. In this paper, we thus conduct the first large-scale study on the Web. For this, we examine the prevalence of WebAssembly in the Alexa Top 1 million websites and find that as many as 1 out of 600 sites execute Wasm code. Moreover, we perform several secondary analyses, including an evaluation of code characteristics and the assessment of a Wasm module's field of application. Based on this, we find that over 50 {\%} of all sites using WebAssembly apply it for malicious deeds, such as mining and obfuscation.",
+isbn="978-3-030-22038-9"
+}
+
+
 
 % On the Use of Web Assembly in a Serverless Context
 @InProceedings{10.1007/978-3-030-58858-8_15,
