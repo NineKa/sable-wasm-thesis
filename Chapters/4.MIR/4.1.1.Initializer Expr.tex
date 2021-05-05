@@ -2,11 +2,11 @@
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{Images/4.MIR/initializer-expression.pdf}
+  \includegraphics[width=\textwidth]{Images/4.MIR/initalizer-expression.pdf}
   \caption{SableWasm MIR Initializer Expression}
   \label{fig:sablewasm-mir-initializer-expression}
 \end{figure}
-
+   
 WebAssembly defines a particular form of expression, namely constant expressions. They can appear in three locations in the current specification. First, global variables declaration can contain constant expression as their initialization values. Additionally, data section entries and element section entries can have constant expressions as the offsets for their initialization payload. In SableWasm MIR, we define initializer expressions that act similar to what constant expression does in WebAssembly. Figure~\ref{fig:sablewasm-mir-initializer-expression} gives a general illustration about SableWasm MIR initializer expressions. The initializer expressions are quite simple. In the current WebAssembly and SableWasm, an initializer expression can be either a constant value or refer to an imported global via \texttt{GlobalGet} instruction. Hence, in principle, currently, SableWasm MIR initializer expression is essentially a single instruction. In the future, one may generalize such constrain by allowing more complex constructs in initializer expressions. 
 
 \paragraph{Constant}
