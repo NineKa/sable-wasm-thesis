@@ -208,3 +208,44 @@ abstract="This paper considers how WASM can be run in different serverless conte
 isbn="978-3-030-58858-8"
 }
 
+% Valgrind
+@inproceedings{valgrind-paper,
+author = {Nethercote, Nicholas and Seward, Julian},
+title = {Valgrind: A Framework for Heavyweight Dynamic Binary Instrumentation},
+year = {2007},
+isbn = {9781595936332},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1250734.1250746},
+doi = {10.1145/1250734.1250746},
+abstract = {Dynamic binary instrumentation (DBI) frameworks make it easy to build dynamic binary analysis (DBA) tools such as checkers and profilers. Much of the focus on DBI frameworks has been on performance; little attention has been paid to their capabilities. As a result, we believe the potential of DBI has not been fully exploited.In this paper we describe Valgrind, a DBI framework designed for building heavyweight DBA tools. We focus on its unique support for shadow values-a powerful but previously little-studied and difficult-to-implement DBA technique, which requires a tool to shadow every register and memory value with another value that describes it. This support accounts for several crucial design features that distinguish Valgrind from other DBI frameworks. Because of these features, lightweight tools built with Valgrind run comparatively slowly, but Valgrind can be used to build more interesting, heavyweight tools that are difficult or impossible to build with other DBI frameworks such as Pin and DynamoRIO.},
+booktitle = {Proceedings of the 28th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {89–100},
+numpages = {12},
+keywords = {dynamic binary instrumentation, Memcheck, shadow values, Valgrind, dynamic binary analysis},
+location = {San Diego, California, USA},
+series = {PLDI '07}
+}
+
+% Stack-based vs register based VM
+@article{stack-and-register-vm,
+author = {Shi, Yunhe and Casey, Kevin and Ertl, M. Anton and Gregg, David},
+title = {Virtual Machine Showdown: Stack versus Registers},
+year = {2008},
+issue_date = {January 2008},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {4},
+number = {4},
+issn = {1544-3566},
+url = {https://doi.org/10.1145/1328195.1328197},
+doi = {10.1145/1328195.1328197},
+abstract = {Virtual machines (VMs) enable the distribution of programs in an architecture-neutral format, which can easily be interpreted or compiled. A long-running question in the design of VMs is whether a stack architecture or register architecture can be implemented more efficiently with an interpreter. We extend existing work on comparing virtual stack and virtual register architectures in three ways. First, our translation from stack to register code and optimization are much more sophisticated. The result is that we eliminate an average of more than 46% of executed VM instructions, with the bytecode size of the register machine being only 26% larger than that of the corresponding stack one. Second, we present a fully functional virtual-register implementation of the Java virtual machine (JVM), which supports Intel, AMD64, PowerPC and Alpha processors. This register VM supports inline-threaded, direct-threaded, token-threaded, and switch dispatch. Third, we present experimental results on a range of additional optimizations such as register allocation and elimination of redundant heap loads. On the AMD64 architecture the register machine using switch dispatch achieves an average speedup of 1.48 over the corresponding stack machine. Even using the more efficient inline-threaded dispatch, the register VM achieves a speedup of 1.15 over the equivalent stack-based VM.},
+journal = {ACM Trans. Archit. Code Optim.},
+month = jan,
+articleno = {2},
+numpages = {36},
+keywords = {register architecture, stack architecture, Interpreter, virtual machine}
+}
+
+  
