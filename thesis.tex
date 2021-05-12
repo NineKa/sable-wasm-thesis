@@ -4,7 +4,6 @@
 \usepackage{amsmath}
 \usepackage{amssymb} 
 \usepackage{graphicx}
-\graphicspath{ {images/} }
 \usepackage[labelfont=bf]{caption}
 \usepackage{subcaption}
 \usepackage{setspace}
@@ -35,6 +34,20 @@
   morecomment=[s]{/*}{*/},
   morestring=[b]',
   morestring=[b]"
+}
+
+\lstdefinelanguage{SableWasmMIR}{
+  keywords={function, memory, table, global, var, const},
+  ndkeywords={i32, i64, f32, f64, v128,
+    int.eq, i32.const, i64.const,
+    int.add, memory.guard,
+    load.32, load.16,
+    cast, 
+    local.get, 
+    call,
+    local.set,
+    br, br.cond, br.table, ret, phi
+  }
 }
 
 \title{
