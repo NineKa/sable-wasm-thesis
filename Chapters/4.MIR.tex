@@ -34,8 +34,15 @@ The translation framework is similar to the validation framework we discussed in
 \input{Chapters/4.MIR/4.2.2.Instructions_Reduction}
 
 \section{Analysis Framework}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{Images/4.MIR/analysis-framework.pdf}
+  \caption{SableWasm MIR Analysis and Optimization Framework}
+  \label{fig:sablewasm-mir-analysis-framework}
+\end{figure}
+SableWasm also implements an analysis and optimization framework over middle-level intermediate representation (MIR). The framework consists of two parts, passes and drivers. SableWasm analysis and transformation framework only provides essential support for managing passes, compared to other more advanced frameworks, such as McSAF\cite{mcsaf}, an optimization framework for MATLAB language. Figure~\ref{fig:sablewasm-mir-analysis-framework} illustrates the current state of the framework in SableWasm. Currently, we implement three different drivers. \texttt{SimpleModulePassDirver} accepts module passes and operates on the module level. At the time of thesis writing, we haven't explored the inter-procedure analysis for SableWasm MIR in detail, and the only module pass implemented is the pretty print pass.
 
-\subsection{Control-Flow Graph Simplification}
+\input{Chapters/4.MIR/4.3.1.Control-Flow_Graph_Simplification}
 
 \subsection{Dominators and Dependence}
 
