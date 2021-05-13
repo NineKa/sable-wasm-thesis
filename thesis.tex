@@ -26,6 +26,8 @@
 \usepackage{color, colortbl}
 \usepackage{booktabs}
 
+\usepackage{courier}
+
 \lstdefinelanguage{JavaScript}{
   keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
   ndkeywords={class, export, boolean, throw, implements, import, this},
@@ -37,16 +39,20 @@
 }
 
 \lstdefinelanguage{SableWasmMIR}{
+  alsoletter={.},
   keywords={function, memory, table, global, var, const},
   ndkeywords={i32, i64, f32, f64, v128,
     int.eq, i32.const, i64.const,
     int.add, memory.guard,
-    load.32, load.16,
+    load.32, load.16, load.64, 
     cast, 
     local.get, 
     call,
     local.set,
-    br, br.cond, br.table, ret, phi
+    br, br.cond, br.table, ret, phi, 
+    v128.int.extract, v128.int.insert, v128.int.splat,
+    v128.int.mul,
+    store.32, store.16
   }
 }
 
