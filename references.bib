@@ -287,3 +287,115 @@ and Kruchten, Philippe},
   location  = {Beijing, China},
   series    = {ECOOP'12}
 }
+
+@inproceedings{cytron-ssa,
+  author    = {Cytron, R. and Ferrante, J. and Rosen, B. K. and Wegman, M. N. and Zadeck, F. K.},
+  title     = {An Efficient Method of Computing Static Single Assignment Form},
+  year      = {1989},
+  isbn      = {0897912942},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/75277.75280},
+  doi       = {10.1145/75277.75280},
+  booktitle = {Proceedings of the 16th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages     = {25–35},
+  numpages  = {11},
+  location  = {Austin, Texas, USA},
+  series    = {POPL '89}
+}
+
+@article{tarjan-fast-dominator,
+  author     = {Lengauer, Thomas and Tarjan, Robert Endre},
+  title      = {A Fast Algorithm for Finding Dominators in a Flowgraph},
+  year       = {1979},
+  issue_date = {July 1979},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {1},
+  number     = {1},
+  issn       = {0164-0925},
+  url        = {https://doi.org/10.1145/357062.357071},
+  doi        = {10.1145/357062.357071},
+  abstract   = {A fast algorithm for finding dominators in a flowgraph is presented. The algorithm uses 
+depth-first search and an efficient method of computing functions defined on paths in trees. A simple implementation of the algorithm runs in O(m log n) time, where m is the number of edges and n is the number of vertices in the problem graph. A more sophisticated implementation runs in O(mα(m, n)) time, where α(m, n) is a functional inverse of Ackermann's function.Both versions of the algorithm were implemented in Algol W, a Stanford University version of Algol, and tested on an IBM 370/168. The programs were compared with an implementation by Purdom and Moore of a straightforward O(mn)-time algorithm, and with a bit vector algorithm described by Aho and Ullman. The fast algorithm beat the straightforward algorithm and the bit vector algorithm on all but the smallest graphs tested.},
+  journal    = {ACM Trans. Program. Lang. Syst.},
+  month      = jan,
+  pages      = {121–141},
+  numpages   = {21}
+}
+
+@article{tarjan-fast-dominator-improved,
+  title    = {Finding Dominators in Practice},
+  volume   = {10},
+  issn     = {1526-1719},
+  url      = {http://jgaa.info/getPaper?id=119},
+  doi      = {10.7155/jgaa.00119},
+  language = {en},
+  number   = {1},
+  urldate  = {2021-05-14},
+  journal  = {Journal of Graph Algorithms and Applications},
+  author   = {Georgiadis, Loukas and Tarjan, Robert E. and Werneck, Renato F.},
+  year     = {2006},
+  pages    = {69--94}
+}
+
+@article{peephole-opt,
+  author     = {McKeeman, W. M.},
+  title      = {Peephole Optimization},
+  year       = {1965},
+  issue_date = {July 1965},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {8},
+  number     = {7},
+  issn       = {0001-0782},
+  url        = {https://doi.org/10.1145/364995.365000},
+  doi        = {10.1145/364995.365000},
+  abstract   = {Redundant instructions may be discarded during the final stage of compilation by using a simple optimizing technique called peephole optimization. The method is described and examples are given.},
+  journal    = {Commun. ACM},
+  month      = jul,
+  pages      = {443–444},
+  numpages   = {2}
+}
+
+@article{alive,
+  author     = {Lopes, Nuno P. and Menendez, David and Nagarakatte, Santosh and Regehr, John},
+  title      = {Provably Correct Peephole Optimizations with Alive},
+  year       = {2015},
+  issue_date = {June 2015},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {50},
+  number     = {6},
+  issn       = {0362-1340},
+  url        = {https://doi.org/10.1145/2813885.2737965},
+  doi        = {10.1145/2813885.2737965},
+  abstract   = { Compilers should not miscompile. Our work addresses problems in developing peephole optimizations that perform local rewriting to improve the efficiency of LLVM code. These optimizations are individually difficult to get right, particularly in the presence of undefined behavior; taken together they represent a persistent source of bugs. This paper presents Alive, a domain-specific language for writing optimizations and for automatically either proving them correct or else generating counterexamples. Furthermore, Alive can be automatically translated into C++ code that is suitable for inclusion in an LLVM optimization pass. Alive is based on an attempt to balance usability and formal methods; for example, it captures---but largely hides---the detailed semantics of three different kinds of undefined behavior in LLVM. We have translated more than 300 LLVM optimizations into Alive and, in the process, found that eight of them were wrong. },
+  journal    = {SIGPLAN Not.},
+  month      = jun,
+  pages      = {22–32},
+  numpages   = {11},
+  keywords   = {Compiler Verification, Peephole Optimization, Alive}
+}
+
+@inproceedings{alive-in-lean,
+  author    = {Juneyoung Lee and
+               Chung{-}Kil Hur and
+               Nuno P. Lopes},
+  editor    = {Isil Dillig and
+               Serdar Tasiran},
+  title     = {AliveInLean: A Verified {LLVM} Peephole Optimization Verifier},
+  booktitle = {Computer Aided Verification - 31st International Conference, {CAV}
+               2019, New York City, NY, USA, July 15-18, 2019, Proceedings, Part
+               {II}},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {11562},
+  pages     = {445--455},
+  publisher = {Springer},
+  year      = {2019},
+  url       = {https://doi.org/10.1007/978-3-030-25543-5\_25},
+  doi       = {10.1007/978-3-030-25543-5\_25},
+  timestamp = {Fri, 27 Mar 2020 08:45:57 +0100},
+  biburl    = {https://dblp.org/rec/conf/cav/LeeHL19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}

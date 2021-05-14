@@ -39,7 +39,7 @@
 }
 
 \lstdefinelanguage{SableWasmMIR}{
-  alsoletter={.},
+  alsoletter={.:},
   keywords={function, memory, table, global, var, const},
   ndkeywords={i32, i64, f32, f64, v128,
     int.eq, i32.const, i64.const,
@@ -52,7 +52,8 @@
     br, br.cond, br.table, ret, phi, 
     v128.int.extract, v128.int.insert, v128.int.splat,
     v128.int.mul,
-    store.32, store.16
+    store.32, store.16,
+    int.lt.u, int.rem.s, int.eqz
   }
 }
 
