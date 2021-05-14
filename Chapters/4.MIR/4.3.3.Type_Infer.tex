@@ -1,0 +1,19 @@
+`\subsection{Type Infer}
+
+This section presents the type system for SableWasm MIR. SableWasm MIR is a statically typed language with a pretty straightforward type system. However, one may already notice that SableWasm MIR does not annotate every instruction with a type, unlike many other compiler intermediate representations. Instead, SableWasm computes the type for value on-demand via a set of type infer rules. The type system for SableWasm MIR generalizes from the MVP WebAssembly type system and its extension proposals with a few modifications. The formal definition for SableWasm MIR types are as follow,
+
+\begin{lstlisting}[basicstyle=\linespread{1}\ttfamily, mathescape=true]
+
+<primitive_type> ::= i32 | i64 | f32 | f64 
+<tuple_type>     ::= (N, <primitive_type>$\dots$)
+<type>           ::= <primitive_type> | <tuple_type> | () | $\bot$
+
+\end{lstlisting}
+
+Here we will skip the discussion for \emph{primitive type} and the type checking rules for its corresponding instructions as they are equivalent to the MVP WebAssembly type system. One should consult the specification for more details. The \emph{tuple type} consists of an unsigned integer and a list of primitive types. They model the return types of multi-value return functions or \texttt{Pack} instructions. Finally, we introduce the unit type, $()$ and bottom type, $\bot$. One can consider the unit type as \texttt{void} in the C programming language. They represent no value present, but the type is valid. On the other hand, the bottom type, $\bot$, signals that the pass can not assign any valid type to the term. In the rest of this section, we will focus on our discussion on extensions made to major WebAssembly extension proposals, multi-value and SIMD operation.
+
+\paragraph{Multi-value} WebAssembly multi-value extensions allow functions to have more than one return values, which is quite interesting. Usually, low-level bytecode representation does not directly support this feature and usually only appears in higher-level language design, such as Python. In section 4.1.3, we introduced two instructions \texttt{Pack} and \texttt{Unpack}, along with how we represent multi-value for functions. As a quick recap, SableWasm uses tuple to denote the multi-value return for functions. \texttt{Pack} instruction collects values and constructs a tuple containing them, while on the other hand, \texttt{Unpack} extracts primitive values from tuples.
+
+$$
+    \frac{\Gamma \vdash v_0 \Rightarrow t_0, \dots, v_n \Rightarrow t_n}{\Gamma \vdash \text{pack } v_0, \dots, v_n \Rightarrow \langle n, t_0 \dots t_n \rangle}
+$$

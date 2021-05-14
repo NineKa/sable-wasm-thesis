@@ -43,11 +43,8 @@ The translation framework is similar to the validation framework we discussed in
 SableWasm also implements an analysis and optimization framework over middle-level intermediate representation (MIR). The framework consists of two parts, passes and drivers. SableWasm analysis and transformation framework only provides essential support for managing passes, compared to other more advanced frameworks, such as McSAF\cite{mcsaf}, an optimization framework for MATLAB language. Figure~\ref{fig:sablewasm-mir-analysis-framework} illustrates the current state of the framework in SableWasm. Currently, we implement three different drivers. \texttt{SimpleModulePassDirver} accepts module passes and operates on the module level. At the time of thesis writing, we haven't explored the inter-procedure analysis for SableWasm MIR in detail, and the only module pass implemented is the pretty print pass. In the future, one can add inter-procedure analysis to SableWasm, by implementing the \texttt{ModulePass} interface. The second driver is the \texttt{SimpleFunctionPassDriver}. As its name suggests, it manages \texttt{FunctionPass} instead. \texttt{FunctionPass} implements intra-procedural analysis that operates over basic blocks. SableWasm currently implements multiple intra-procedural analyses, such as dominator tree construction and local variable numbering. We will cover these passes in detail in this section. The last driver in SableWasm is \texttt{SimpleForEachFunctionPassDriver} which is a wrapper class for \texttt{SimpleFunctionPassDriver}. It works with \texttt{FunctionPass} but takes module as argument. It will apply the pass for each function within the module and terminates if they reach a fixpoint. McSAF manages the analysis result for the passes and automatically detects if the analysis reaches fixpoint. SableWasm analysis framework requires more manual work when designing passes and requires passes to report whether they have reached fixpoint to the driver correctly via pass's return value.
 
 \input{Chapters/4.MIR/4.3.1.Dominators_and_Dependence}
-
 \input{Chapters/4.MIR/4.3.2.Control-Flow_Graph_Simplification}
-
-
-\subsection{Type Infer}
+\input{Chapters/4.MIR/4.3.3.Type_Infer}
 
 \subsection{Local Value Numbering}
 
