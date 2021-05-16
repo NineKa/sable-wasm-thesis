@@ -1,15 +1,10 @@
 \chapter{Backend and Runtime}
 
-\section{Instance Layout}
+This chapter discusses the last component of the SableWasm compilation pipeline, the code generation backend and runtime support for generated shared libraries. Currently, SableWasm has only one backend based on the LLVM compiler infrastructure. However, in the future, one can easily extend the system by adding more backends that lowering SableWasm MIR into other intermediate representations. Another problem that appears when designing a backend is how SableWasm MIR entities map to native constructs. In SableWasm, we take an instance-based approach. The SableWasm runtime library will manage all entities in an instance object. The system will pass it to the generated native functions as the first argument, similar to `this' pointer in many C++ implementations. In the rest of the chapter, we will first go through the design of the instance object, followed by code generation strategies used when lowering SableWasm MIR to LLVM intermediate representation. Finally, we will discuss the implementation of WebAssembly entities and the interaction between generated shared libraries and the hosting language.
+
+\input{Chapters/5.Backend_and_Runtime/5.1.Instance_Layout}
+\input{Chapters/5.Backend_and_Runtime/5.2.WebAssembly_Entities}
 
 \section{Code Generation}
-
-\section{WebAssembly Entities}
-
-\subsection{Linear Memory}
-
-\subsection{Global}
-
-\subsection{Indirect Table}
 
 \section{Interface with C/C++}
