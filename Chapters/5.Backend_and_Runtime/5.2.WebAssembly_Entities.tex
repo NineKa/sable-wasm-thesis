@@ -1,7 +1,35 @@
 \section{WebAssembly Entities}
 
-\subsection{Linear Memory}
+In the previous section, we discuss the design of the SableWasm WebAssembly instance object. However, we treat all WebAssembly entities' implementation as an opaque pointer without diving into the details during the last section. This section will cover the implementation of the WebAssembly entities along with the runtime library support functions exposed to the generated code in SableWasm. Before we start this section, we will first present the terms used throughout the later part of the thesis. In the rest of the chapter, we use \texttt{\_\_sable\_instance\_t} to denote the type of the instance object. Similarly, we use a similar format when talking about WebAssembly linear memory, indirect table and global variables. For example, \texttt{\_\_sable\_instance\_t} is the type of SableWasm's WebAssembly linear memory implementation. Finally, we use \texttt{\_\_sable\_function\_t} refer to the function pointers that point to generated native functions.
 
-\subsection{Global}
+\paragraph{Linear Memory}
 
-\subsection{Indirect Table}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.85\textwidth]{Images/5.Backend_and_Runtime/memory}
+    \caption{SableWasm WebAssembly linear memory}
+    \label{fig:backend-memory}
+\end{figure}
+
+SableWasm implements WebAssembly linear memory with mapped memory provided by the operating system. It also has a fallback implementation that uses standard \texttt{malloc} and \texttt{free} procedure from the C library for an operating system that does not support mapped memory. The fallback implementation is relatively trivial, and we will not discuss it in the thesis. Here, we will focus on the one that uses mapped memory. Figure~\ref{fig:backend-memory} illustrates the strategies when mapping WebAssembly linear memory into native memory. On the top, we have a linear memory with a size of 1 in WebAssembly page size. In the figure, we assume the native machine has a page size of 4KiB, which is typical for most hardware architectures. A quick recap on the requirements of WebAssembly linear memory. First, the program can efficiently random access any location within the linear memory. Second, at runtime, the module function can query the size of the linear memory. Finally, the program can grow the linear memory if the runtime system allows it. SableWasm implements the linear memory using a similar trick as the one used for `\texttt{malloc}' functions in many C standard library implementations. From the generated shared libraries' point of view, the linear memory object points to the start of a continuous memory chunk. Hence, memory accesses are efficient and require only one layer of indirection. First, the generated function will fetch the linear memory base pointer from the instance object and perform offset calculation accordingly. An extra page manages the metadata of the linear memory at the beginning. It contains all the records that the runtime system needs to work with the linear memory, such as the current size and the upper bound. Note that the size of the metadata is usually way smaller than the page size defined by the native machine. Still, SableWasm reserves a whole page for it, as we want our linear memory start address to be always page-aligned in the hope of better performance.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Runtime support functions} & \textbf{Return Value} & \textbf{Arguments}                \\ \hline
+        \_\_sable\_memory\_size            & uint32\_t             & \_\_sable\_memory\_t *            \\ \hline
+        \_\_sable\_memory\_guard           & void                  & \_\_sable\_memory\_t *, uint32\_t \\ \hline
+        \_\_sable\_memory\_grow            & uint32\_t             & \_\_sable\_memory\_t *, uint32\_t \\ \hline
+    \end{tabular}
+    \caption{SableWasm runtime support functions for linear memory}
+    \label{tbl:sablewasm-runtime-memory-api}
+\end{table}
+
+SableWasm implements additional functionality through library functions. Table~\ref{tbl:sablewasm-runtime-memory-api} illustrates all the runtime library support functions provided by SableWasm. \texttt{\_\_sable\_memory\_size} implements SableWasm's \texttt{MemorySize} instruction. It takes an argument of linear memory instance and returns the size of it in WebAssembly page size. The second runtime support function, \texttt{\_\_sable\_memory\_guard} corresponds to the \texttt{MemoryGuard} instructions in SableWasm. It takes the arguments of a linear memory instance and the expected number of bytes ahead. Note that the function does not return any values, and this is intentional by design. SableWasm runtime library utilizes the C++ exception mechanism to report and handle errors. If the memory access is out-of-bound, the runtime system will throw an exception. We will come back to this later in the chapter when discussing the interaction between the generated shared libraries and the host language. Finally, the last runtime support function, \texttt{\_\_sable\_memory\_grow} implements the SableWasm's \texttt{MemoryGrow} instruction. The instruction follows its counterpart that appeared in WebAssembly specification. It takes a linear memory instance and the number of pages to increase as arguments. If the operation is successful, the function will yield to the new size of the linear memory; otherwise, it returns -1 instead. SableWasm grows the memory by remmaping the memory with the help of the oeprating system. On Linux, this usually corresponds to a \texttt{mremap} operation.
+
+In the above implementation, all linear memory-bound checks are program-directed, and they are relatively quite expensive. To further improve the performance, we use a similar technique used by many virtual machine implementations, which utilizes mapped memory access flags. Figure~\ref{fig:backend-memory} illustrates this approach at the bottom. One may notice that MVP WebAssembly works with 32-bit addressing \footnote{This is subject to change in the future. WebAssembly 64-bit memory addressing:\\\url{https://github.com/WebAssembly/memory64}}. Hence, the maximum size of the linear memory is 4GiB. Thus, SableWasm reserves 4GiB of address when allocating the linear memory and marks all the pages beyond the current range as invalid pages.  This operation is quite efficient as we only work with the memory address instead of allocating the memory. In this implementation, any out-of-bound will result in a memory segmentation fault. Note that this strategy does yield better performance but results in a nonrecoverable error. SableWasm provides both implementations, and one can select based on their needs. In the next chapter, when we compare SableWasm's performance against several other implementations. We always use the second strategy, as the recoverable code is not a requirement.
+
+\paragraph{Global}
+
+\paragraph{Indirect Table}
