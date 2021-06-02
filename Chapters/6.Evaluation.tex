@@ -1,4 +1,94 @@
 \chapter{Evaluation}
 
+In the previous chapters, we present the design of the SableWasm compiler and runtime. This chapter will focus on the performance evaluation in terms of the execution speed of the generated shared libraries. Here, we focus on three research problems. First, how does SableWasm performs compares to other WebAssembly runtime environment implementations? Second, does the optimization over the input WebAssembly module affect the overall performance? Finally, how much does the WebAssembly SIMD extension improve comparing to optimized scalar counterparts? We will first present the setup for experiments used when investigating three questions, and later, the experiment results for each one of them.
+
 \section{Experiment Setup}
 
+This section presents the setup for the experiments in the remaining part of the chapter. We conduct the benchmarks on the same server for all experiments. The server has a The experiments were performed on a six-core Intel Core processor at a 3.7 GHz standard clock frequency and an L3 cache of 12 MiB. Additionally, The server runs Ubuntu 18.04 with Linux kernel version 4.15.0 and 32GiB of memory. When measuring the performance, we execute each benchmark ten times in succession to minimize the measurement error as some of the benchmarks take less than a second to complete. Finally, the final benchmark result is the average among ten runs except the highest and the lowest. For the benchmark subject, we choose three different benchmark suits, the Polyhedral benchmark suite (Polybench), the Ostrich benchmark suite (Ostrich) and the NAS parallel benchmarks (NPB).
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Benchmark Name} & \textbf{Description}                                \\ \hline
+        2mm                     & 2 matrix multiplication (D = A.B; E = C.D)          \\ \hline
+        3mm                     & 3 matrix multiplication (E = A.B; F = C.D; G = E.F) \\ \hline
+        adi                     & alternating direction implicit solver               \\ \hline
+        atax                    & matrix transpose followed by vector multiplication  \\ \hline
+        bicg                    & BiCG sub kernel of BiCGStab linear solver           \\ \hline
+        cholesky                & Cholesky decomposition                              \\ \hline
+        correlation             & correlation computation                             \\ \hline
+        covariance              & covariance computation                              \\ \hline
+        doitgen                 & multiresolution analysis kernel (MADNESS)           \\ \hline
+        dynprog                 & dynamic programming (2D)                            \\ \hline
+        fdtd-2d                 & 2D finite different time domain kernel              \\ \hline
+        fdtd-apml               & FDTD using anisotropic perfectly matched layer      \\ \hline
+        gauss-filter            & gaussian filter                                     \\ \hline
+        gemm                    & matrix-multiply (C = alpha.A.B + beta.C)            \\ \hline
+        gramschmidt             & Gram-Schmidt decomposition                          \\ \hline
+        jacobi-1D               & 1D Jacobi stencil computation                       \\ \hline
+        jacobi-2D               & 2D Jacobi stencil computation                       \\ \hline
+        lu                      & LU decomposition                                    \\ \hline
+        ludcmp                  & LU decomposition (different implementation)         \\ \hline
+        mvt                     & matrix vector product and transpose                 \\ \hline
+        reg-detect              & 2D image processing                                 \\ \hline
+        seidel                  & 2D Seidel stencil computation                       \\ \hline
+        symm                    & symmetric matrix multiplication                     \\ \hline
+        syr2k                   & symmetric rank-2k operations                        \\ \hline
+        syrk                    & symmetric rank-k operations                         \\ \hline
+        trisolv                 & triangular solver                                   \\ \hline
+        trmm                    & triangular matrix multiplication                    \\ \hline
+    \end{tabular}
+    \caption{the Polybench benchmark suite (Polybench)}
+    \label{tbl:polybench}
+\end{table}
+
+\paragraph{Polybench}
+The Polyhedral benchmark suite (Polybench) \cite{polybench} contains a group of small math kernel functions as shown in table~\ref{tbl:polybench}. WebAssembly announcement paper \cite{10.1145/3062341.3062363} also chooses Polybench as the evaluation subject. However, one problem is that the Polybench is in C. Therefore, in the WebAssembly announcement paper, the researchers cross-compile the benchmark using a modified Clang compiler with LLVM WebAssembly backend. However, there is no standardized system interface, such as WASI, proposed by the community when publishing the paper. Hence, the experiment is measure with an external clock, and all features that require system interaction are disabled.
+On the other hand, when evaluating SableWasm, we use a WASI-enabled Clang compiler to cross-compile the WebAssembly modules into shared libraries. Each benchmark reports its execution time by issuing syscalls to the runtime environment, which in theory, should yield more accurate results, especially for a just-in-time (JIT) runtime environment.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Benchmark Name} & \textbf{Description}                                        \\ \hline
+        back-prop               & backward propagation in a layered neural network            \\ \hline
+        bfs                     & breadth-first search in a randomly generated graph          \\ \hline
+        crc                     & CRC error-detecting algorithm                               \\ \hline
+        fft                     & fast Fourier transform                                      \\ \hline
+        hmm                     & forward-backward algorithm over a hidden Markov model       \\ \hline
+        lavamd                  & 3D space particle simulation                                \\ \hline
+        lud                     & LU decomposition                                            \\ \hline
+        nqueens                 & a N-queen problem solver                                    \\ \hline
+        nw                      & find optimal alignment of two protein sequences             \\ \hline
+        page-rank               & page-rank algorithm to measure the importance of a web site \\ \hline
+        spmv                    & sparse matrix multiplication with a vector                  \\ \hline
+        srad                    & a diffusion method for ultrasonic and radar imaging         \\ \hline
+    \end{tabular}
+    \caption{the Ostrich benchmark suite (Ostrich)}
+    \label{tbl:ostrich}
+\end{table}
+
+\paragraph{Ostrich}
+The second benchmark suite we used in the Ostrich benchmark suite\cite{ostrich}, illustrated in table~\ref{tbl:ostrich}. Comparing to the Polybench, Ostrich focuses on larger scientific problems instead of computation kernels. Ostrich benchmark suite supports multiple programming languages, such as Javascript and C. Here, we prepare the WebAssembly module similar to the Polybench benchmark suite with a WASI-enable Clang compiler. However, unlike the Polybench benchmark suite, which does not require any modification on the source code, we need to tweak the Ostrich benchmark code due to the limitation of WebAssembly specification. This includes hard-coding the command-line arguments and replacing throwing an exception with calling \texttt{exit} function.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        Benchmark Name & Description                                          \\ \hline
+        IS             & integer sort (bucket sort)                           \\ \hline
+        EP             & Marsaglia polar method for generating random numbers \\ \hline
+        CG             & estimate the smallest eigenvalue of a SPD matrix     \\ \hline
+        MG             & multi-grid on a sequence of meshes                   \\ \hline
+        FT             & fast Fourier transform                               \\ \hline
+        BT             & block tri-diagonal solver                            \\ \hline
+        SP             & scalar penta-diagonal solver                         \\ \hline
+        LU             & lower-upper solver                                   \\ \hline
+    \end{tabular}
+    \caption{the NAS parallel benchmark suite (NPB)}
+    \label{tbl:npb}
+\end{table}
+
+\paragraph{NPB}
+The last benchmark suite we selected for evaluating SableWasm is the NAS parallel benchmark suite \cite{npb}, shown in the table~\ref{tbl:npb}. We choose this benchmark because of its parallel nature, as the third research question focuses on the SIMD instruction operations. However, the original NPB benchmark suite is in Fortran, and, at the time of thesis writing, there is no cross-compiler between Fortran and WebAssembly. Hence, we choose an OpenMP variant instead \footnote{NPB OpenMP C: \url{https://github.com/benchmark-subsetting/NPB3.0-omp-C}}. Although the currently WASI-enable Clang does not support OpenMP, we can still cross-compile into WebAssembly, as OpenMP code can trivially reduce to C.
