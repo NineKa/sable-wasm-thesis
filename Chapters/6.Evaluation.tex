@@ -96,7 +96,188 @@ This section presents the benchmark environment and test cases for the experimen
 
 \section[RQ1: How does SableWasm perform compare to others?]{{\large RQ1: How does SableWasm perform compare to others?}}
 
-In this section, we will compare SableWasm performance against several other WebAssembly runtime environments.
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmtime-naive.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmtime-naive.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmtime-naive.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with naive (\texttt{-O0}) on Wasmtime}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmer-cranelift-naive.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmer-cranelift-naive.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmer-cranelift-naive.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with naive (\texttt{-O0}) on Wasmer(Cranelift)}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmer-llvm-naive.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmer-llvm-naive.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmer-llvm-naive.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with naive (\texttt{-O0}) on Wasmer(LLVM)}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmtime-opt.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmtime-opt.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmtime-opt.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with optimized (\texttt{-O3}) on Wasmtime}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmer-cranelift-opt.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmer-cranelift-opt.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmer-cranelift-opt.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with optimized (\texttt{-O3}) on Wasmer(Cranelift)}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmer-llvm-opt.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmer-llvm-opt.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmer-llvm-opt.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with optimized (\texttt{-O3}) on Wasmer(LLVM)}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmtime-simd.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmtime-simd.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmtime-simd.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with SIMD extension (\texttt{-O3 -msimd128}) on Wasmtime}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmer-cranelift-simd.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmer-cranelift-simd.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmer-cranelift-simd.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with SIMD extension (\texttt{-O3 -msimd128}) on Wasmer(Cranelift)}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/polybench-wasmer-llvm-simd.pdf}
+        \caption{Polybench}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/ostrich-wasmer-llvm-simd.pdf}
+        \caption{Ostrich}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]
+        {Images/6.1.RQ1/npb-wasmer-llvm-simd.pdf}
+        \caption{NPB}
+    \end{subfigure}
+    \caption{Bechmarks with SIMD extension (\texttt{-O3 -msimd128}) on Wasmer(LLVM)}
+\end{figure}
+
+This section will compare SableWasm performance against several other WebAssembly runtime environments, more specifically, Wasmtime and Wasmer. We will benchmark three implementations over naive (\texttt{-O0}), optimized (\texttt{-O3}), and SIMD-enabled optimized (\texttt{-O3 -msimd128}) WebAssembly modules compiled from the source. One can consider Wasmtime \footnote{Wasmtime: \url{https://github.com/bytecodealliance/wasmtime}} as the `reference' implementation of WebAssembly out of the browser and maintained by the WebAssembly community group. The system is builtin on the  custom compile framework, Cranelift \footnote{Cranelift: \url{https://github.com/bytecodealliance/wasmtime/tree/main/cranelift}}. Currently, both Cranelift and Wasmtime are still under active development and subject to changes in the future. Here, in this project, we anchor our Wasmtime at version 0.26.0. Wasmer \footnote{Wasmer: \url{https://wasmer.io/}} is another community approach for running WebAssembly sandboxed applications outside of the browser. It comes with a package manager, WAPM \footnote{WAPM: \url{https://wapm.io/}}, that distributes applications in WebAssembly binary module format. Wasmer supports three compiler backends, LLVM, Cranelift, and a one-pass code generator for fast compilation. In this chapter, we will focus on the LLVM and Cranelift variants of Wasmer. Similar to Wasmtime, Wasmer is also under active development at the time of thesis writing, and we fix the version of Wasmer at 1.0.2.
+
 
 \section[RQ2: Does optimization over input modules matter?]{
   {\large RQ2: Does optimization over input modules matter?}}
