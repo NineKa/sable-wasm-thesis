@@ -39,13 +39,12 @@ This section presents the setup for the experiments in the remaining part of the
         trisolv                 & triangular solver                                   \\ \hline
         trmm                    & triangular matrix multiplication                    \\ \hline
     \end{tabular}
-    \caption{the Polybench benchmark suite (Polybench)}
+    \caption{the Polyhedral benchmark suite (Polybench)}
     \label{tbl:polybench}
 \end{table}
 
 \paragraph{Polybench}
-The Polyhedral benchmark suite (Polybench) \cite{polybench} contains a group of small math kernel functions as shown in table~\ref{tbl:polybench}. WebAssembly announcement paper \cite{10.1145/3062341.3062363} also chooses Polybench as the evaluation subject. However, one problem is that the Polybench is in C. Therefore, in the WebAssembly announcement paper, the researchers cross-compile the benchmark using a modified Clang compiler with LLVM WebAssembly backend. However, there is no standardized system interface, such as WASI, proposed by the community when publishing the paper. Hence, the experiment is measure with an external clock, and all features that require system interaction are disabled.
-On the other hand, when evaluating SableWasm, we use a WASI-enabled Clang compiler to cross-compile the WebAssembly modules into shared libraries. Each benchmark reports its execution time by issuing syscalls to the runtime environment, which in theory, should yield more accurate results, especially for a just-in-time (JIT) runtime environment.
+The Polyhedral benchmark suite (Polybench) \cite{polybench} contains a group of small math kernel functions as shown in table~\ref{tbl:polybench}. The description table is adjusted from official Polybench documentation\footnote{Polybench: \url{http://web.cse.ohio-state.edu/~pouchet.2/software/polybench/}}. In the WebAssembly announcement paper \cite{10.1145/3062341.3062363}, the community also chooses Polybench as the evaluation subject. However, one problem is that the Polybench is in C. Therefore, the researchers cross-compile the benchmark using a modified Clang compiler with LLVM WebAssembly backend. However, there is no standardized system interface, such as WASI, proposed by the community when publishing the paper. Hence, the experiment is measure with an external clock, and all features that require system interaction are disabled. On the other hand, when evaluating SableWasm, we use a WASI-enabled Clang compiler \footnote{WASI SDK: \url{https://github.com/WebAssembly/wasi-sdk}} to cross-compile the WebAssembly modules into shared libraries. Each benchmark reports its execution time by issuing syscalls to the runtime environment, which in theory, should yield more accurate results, especially for a just-in-time (JIT) runtime environment.
 
 \begin{table}
     \centering
@@ -59,11 +58,11 @@ On the other hand, when evaluating SableWasm, we use a WASI-enabled Clang compil
         hmm                     & forward-backward algorithm over a hidden Markov model       \\ \hline
         lavamd                  & 3D space particle simulation                                \\ \hline
         lud                     & LU decomposition                                            \\ \hline
-        nqueens                 & a N-queen problem solver                                    \\ \hline
-        nw                      & find optimal alignment of two protein sequences             \\ \hline
+        nqueens                 & N-queen problem solver                                      \\ \hline
+        nw (needle)             & find optimal alignment of two protein sequences             \\ \hline
         page-rank               & page-rank algorithm to measure the importance of a web site \\ \hline
         spmv                    & sparse matrix multiplication with a vector                  \\ \hline
-        srad                    & a diffusion method for ultrasonic and radar imaging         \\ \hline
+        srad                    & diffusion method for ultrasonic and radar imaging           \\ \hline
     \end{tabular}
     \caption{the Ostrich benchmark suite (Ostrich)}
     \label{tbl:ostrich}
@@ -76,15 +75,15 @@ The second benchmark suite we used in the Ostrich benchmark suite\cite{ostrich},
     \centering
     \begin{tabular}{|l|l|}
         \hline
-        Benchmark Name & Description                                          \\ \hline
-        IS             & integer sort (bucket sort)                           \\ \hline
-        EP             & Marsaglia polar method for generating random numbers \\ \hline
-        CG             & estimate the smallest eigenvalue of a SPD matrix     \\ \hline
-        MG             & multi-grid on a sequence of meshes                   \\ \hline
-        FT             & fast Fourier transform                               \\ \hline
-        BT             & block tri-diagonal solver                            \\ \hline
-        SP             & scalar penta-diagonal solver                         \\ \hline
-        LU             & lower-upper solver                                   \\ \hline
+        \textbf{Benchmark Name} & \textbf{Description}                                 \\ \hline
+        IS                      & integer sort (bucket sort)                           \\ \hline
+        EP                      & Marsaglia polar method for generating random numbers \\ \hline
+        CG                      & estimate the smallest eigenvalue of a SPD matrix     \\ \hline
+        MG                      & multi-grid on a sequence of meshes                   \\ \hline
+        FT                      & fast Fourier transform                               \\ \hline
+        BT                      & block tri-diagonal solver                            \\ \hline
+        SP                      & scalar penta-diagonal solver                         \\ \hline
+        LU                      & lower-upper solver                                   \\ \hline
     \end{tabular}
     \caption{the NAS parallel benchmark suite (NPB)}
     \label{tbl:npb}
