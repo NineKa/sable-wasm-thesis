@@ -114,6 +114,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with naive (\texttt{-O0}) on Wasmtime}
+    \label{fig:rq1-wasmtime-naive}
 \end{figure}
 
 \begin{figure}
@@ -134,6 +135,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with naive (\texttt{-O0}) on Wasmer(Cranelift)}
+    \label{fig:rq1-wasmer-cranelift-naive}
 \end{figure}
 
 \begin{figure}
@@ -154,6 +156,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with naive (\texttt{-O0}) on Wasmer(LLVM)}
+    \label{fig:rq1-wasmer-llvm-naive}
 \end{figure}
 
 \begin{figure}
@@ -162,6 +165,7 @@ This section presents the benchmark environment and test cases for the experimen
         \includegraphics[width=\textwidth]
         {Images/6.1.RQ1/polybench-wasmtime-opt.pdf}
         \caption{Polybench}
+        \label{fig:rq1-wasmtime-opt-polybench}
     \end{subfigure}
     \begin{subfigure}[t]{.45\textwidth}
         \includegraphics[width=\textwidth]
@@ -174,6 +178,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with optimized (\texttt{-O3}) on Wasmtime}
+    \label{fig:rq1-wasmtime-opt}
 \end{figure}
 
 \begin{figure}
@@ -194,6 +199,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with optimized (\texttt{-O3}) on Wasmer(Cranelift)}
+    \label{fig:rq1-wamer-cranelift-opt}
 \end{figure}
 
 \begin{figure}
@@ -214,6 +220,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with optimized (\texttt{-O3}) on Wasmer(LLVM)}
+    \label{fig:rq1-wasmer-llvm-opt}
 \end{figure}
 
 \begin{figure}
@@ -234,6 +241,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with SIMD extension (\texttt{-O3 -msimd128}) on Wasmtime}
+    \label{fig:rq1-wasmtime-simd}
 \end{figure}
 
 \begin{figure}
@@ -254,6 +262,7 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with SIMD extension (\texttt{-O3 -msimd128}) on Wasmer(Cranelift)}
+    \label{fig:rq1-wasmer-cranelift-simd}
 \end{figure}
 
 \begin{figure}
@@ -274,9 +283,18 @@ This section presents the benchmark environment and test cases for the experimen
         \caption{NPB}
     \end{subfigure}
     \caption{Bechmarks with SIMD extension (\texttt{-O3 -msimd128}) on Wasmer(LLVM)}
+    \label{fig:rq1-wasmer-llvm-simd}
 \end{figure}
 
-This section will compare SableWasm performance against several other WebAssembly runtime environments, more specifically, Wasmtime and Wasmer. We will benchmark three implementations over naive (\texttt{-O0}), optimized (\texttt{-O3}), and SIMD-enabled optimized (\texttt{-O3 -msimd128}) WebAssembly modules compiled from the source. One can consider Wasmtime \footnote{Wasmtime: \url{https://github.com/bytecodealliance/wasmtime}} as the `reference' implementation of WebAssembly out of the browser and maintained by the WebAssembly community group. The system is builtin on the  custom compile framework, Cranelift \footnote{Cranelift: \url{https://github.com/bytecodealliance/wasmtime/tree/main/cranelift}}. Currently, both Cranelift and Wasmtime are still under active development and subject to changes in the future. Here, in this project, we anchor our Wasmtime at version 0.26.0. Wasmer \footnote{Wasmer: \url{https://wasmer.io/}} is another community approach for running WebAssembly sandboxed applications outside of the browser. It comes with a package manager, WAPM \footnote{WAPM: \url{https://wapm.io/}}, that distributes applications in WebAssembly binary module format. Wasmer supports three compiler backends, LLVM, Cranelift, and a one-pass code generator for fast compilation. In this chapter, we will focus on the LLVM and Cranelift variants of Wasmer. Similar to Wasmtime, Wasmer is also under active development at the time of thesis writing, and we fix the version of Wasmer at 1.0.2.
+This section will compare SableWasm performance against several other WebAssembly runtime environments, specifically Wasmtime and Wasmer. We will benchmark three implementations over naive (\texttt{-O0}), optimized (\texttt{-O3}), and SIMD-enabled optimized (\texttt{-O3 -msimd128}) WebAssembly modules compiled from the source. One can consider Wasmtime \footnote{Wasmtime: \url{https://github.com/bytecodealliance/wasmtime}} as the `reference' implementation of WebAssembly out of the browser and maintained by the WebAssembly community group. The system is built upon the  custom compile framework, Cranelift \footnote{Cranelift: \url{https://github.com/bytecodealliance/wasmtime/tree/main/cranelift}}. Currently, both Cranelift and Wasmtime are still under active development and subject to changes in the future. Here, in this project, we anchor our Wasmtime at version 0.26.0. Wasmer \footnote{Wasmer: \url{https://wasmer.io/}} is another community approach for running WebAssembly sandboxed applications outside of the browser. It comes with a package manager, WAPM \footnote{WAPM: \url{https://wapm.io/}}, that distributes applications in WebAssembly binary module format. Wasmer supports three compiler backends, LLVM, Cranelift, and a one-pass code generator for fast compilation. In this chapter, we will focus on the LLVM and Cranelift variants of Wasmer. Similar to Wasmtime, Wasmer is also under active development at the time of thesis writing, and we fix the version of Wasmer at 1.0.2. Unlike SableWasm, an ahead-of-time(AOT) compiler for WebAssembly modules, Wasmtime and Wasmer are both just-in-time (JIT). Thus, when measuring the benchmark's performance, we need to isolate the error induced by the compiler, such as compilation-overhead and warm-up time. To eliminate the compilation-overhead, we measure the execution time within the internal timing code by issuing syscalls to the WASI layer. Further, we adjust the benchmark size for Ostrich and NPB so that each benchmark case takes more than 10 seconds to compute to reduce the error introduced by the JIT warm-up process.
+
+Figure~\ref{fig:rq1-wasmtime-naive} to figure~\ref{fig:rq1-wasmer-llvm-simd} presents the benchmark result. We normalize the data with respect to the SableWasm's execution time and present them as speed-ups. A number higher than one means that the SableWasm's performance is better than the candidate, and on the other hand, a less than one speed-up refers to slow-down. The error bar is calculated based on the  10th percentile and 90th percentile accordingly. For naive translated WebAssembly modules, SableWasm performs better than Wasmtime in most benchmark cases but slower in seven cases in total.
+
+For naive translated WebAssembly modules, SableWasm performs better than Wasmtime in most benchmark cases except seven of them. We suspect that slow down comes from the excessive linear memory access. In the current version of the WASI-enable Clang compiler, a naive translated module will use linear memory to simulate stack frame functions instead of using local variables. This means that when writing to a function local variable, SableWasm needs to first load the linear memory base pointer from the instance object, calculate the address and then perform the memory access. Making the case worse, the current SableWasm will always load the base memory pointer even if a local variable already holds the base pointer. LLVM cannot effectively eliminate these load instructions, as the linear memory base pointer in the instance object is volatile. One possible solution to ease the problem is to carefully annotate the instance object pointer so that the alias analysis in SableWasm can correctly identify these redundant load instructions. On the other hand, SableWasm performs better than Wasmer with both Cranelift or LLVM backend. This is quite interesting as the current SableWasm is also built upon LLVM. We suspect that two factors are contributing to the speedup. First, SableWasm employs several optimization techniques to improve the quality of the generated LLVM intermediate representation. When designing the translation patterns for lowering SableWasm MIR into LLVM IR, we notice that the quality of LLVM IR has a significant impact on the result performance, especially for auto-vectorization. Second, Wasmer supports many other safety features that are not specified in the WebAssembly specification, such as stack probing. These safety features impose performance drawbacks on the system and can be observed from the benchmark results above.
+
+For optimized and SIMD-enabled input WebAssembly modules, SableWasm performs on par with Wasmtime, except on benchmark case \texttt{durbin}. One may also notice that the error for \texttt{durbin} in figure~\ref{fig:rq1-wasmtime-opt-polybench} is more significant compared to others. This is due to the nature of \texttt{durbin} benchmark case. For Ostrich and NPB, we can adjust the benchmark size to reduce the measurement errors. However, this is not the case for Polybench, as the input size is hardcoded. On the other hand, SableWasm performs better than Wasmer in most of the benchmark cases. Here we will take \texttt{floyd-warshall} as an example. The core computation function in \texttt{floyd-warshall} is a nested for loop that iteratively multiplies then adds matrices. This operation is highly parallel. We notice that the performance of SableWasm is approximately four times better in optimized input and two times better for SIMD-enabled. Currently, there seems no way to retrieve generated LLVM IR from Wasmer, and we can only suspect reasons based on the experiment result. We suspect that the auto-vectorization may cause this in the LLVM framework. The four times and two times speedup appears to align with the SIMD vector operations for packed double-precision floating-point numbers. Thus, Wasmer may contain awkwardly generated LLVM intermediate representation that stops auto-vectorization pass to turn scalar code into the vectorized form.
+
+In general, we conclude that SableWasm performs on par with Wasmtime on optimized and SIMD-enabled WebAssembly modules and better than Wasmtime and Wasmer for other benchmark cases.
 
 
 \section[RQ2: Does optimization over input modules matter?]{
