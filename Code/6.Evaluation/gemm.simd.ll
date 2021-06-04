@@ -1,0 +1,24 @@
+%indvars.iv181 = phi i64 [ %indvars.iv.next182, %80 ], [ 0, %78 ]
+%81 = phi <2 x i64> [ %102, %80 ], [ <i64 0, i64 1>, %78 ]
+%82 = trunc i64 %indvars.iv181 to i32
+%83 = add i32 %.0126, %82
+%84 = mul <2 x i64> %81, %79
+%85 = add <2 x i64> %84, <i64 1, i64 1>
+%86 = bitcast <2 x i64> %85 to i128
+%87 = and i128 %86, 79228162495817593524129366015
+%88 = bitcast i128 %87 to <2 x i64>
+%89 = extractelement <2 x i64> %88, i64 0
+%90 = urem i64 %89, 1000
+%91 = sitofp i64 %90 to double
+%.splatinsert1 = insertelement <2 x double> poison, double %91, i32 0
+%92 = extractelement <2 x i64> %88, i64 1
+%93 = urem i64 %92, 1000
+%94 = sitofp i64 %93 to double
+%95 = insertelement <2 x double> %.splatinsert1, double %94, i64 1
+%96 = fdiv <2 x double> %95, <double 1.000000e+03, double 1.000000e+03>
+%97 = load %__sable_memory_t*, %__sable_memory_t** %12, align 8
+%98 = ptrtoint %__sable_memory_t* %97 to i64
+%99 = zext i32 %83 to i64
+%100 = add nuw i64 %98, %99
+%101 = inttoptr i64 %100 to <2 x double>*
+store <2 x double> %96, <2 x double>* %101, align 8
