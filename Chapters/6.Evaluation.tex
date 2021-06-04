@@ -294,7 +294,14 @@ For naive translated WebAssembly modules, SableWasm performs better than Wasmtim
 
 For optimized and SIMD-enabled input WebAssembly modules, SableWasm performs on par with Wasmtime, except on benchmark case \texttt{durbin}. One may also notice that the error for \texttt{durbin} in figure~\ref{fig:rq1-wasmtime-opt-polybench} is more significant compared to others. This is due to the nature of \texttt{durbin} benchmark case. For Ostrich and NPB, we can adjust the benchmark size to reduce the measurement errors. However, this is not the case for Polybench, as the input size is hardcoded. On the other hand, SableWasm performs better than Wasmer in most of the benchmark cases. Here we will take \texttt{floyd-warshall} as an example. The core computation function in \texttt{floyd-warshall} is a nested for loop that iteratively multiplies then adds matrices. This operation is highly parallel. We notice that the performance of SableWasm is approximately four times better in optimized input and two times better for SIMD-enabled. Currently, there seems no way to retrieve generated LLVM IR from Wasmer, and we can only suspect reasons based on the experiment result. We suspect that the auto-vectorization may cause this in the LLVM framework. The four times and two times speedup appears to align with the SIMD vector operations for packed double-precision floating-point numbers. Thus, Wasmer may contain awkwardly generated LLVM intermediate representation that stops auto-vectorization pass to turn scalar code into the vectorized form.
 
-In general, we conclude that SableWasm performs on par with Wasmtime on optimized and SIMD-enabled WebAssembly modules and better than Wasmtime and Wasmer for other benchmark cases.
+\begin{table}[]
+    \centering
+    \input{Tables/RQ1-average}
+    \caption{Average speedups compare to Wasmtime and Wasmer}
+    \label{tbl:rq1-average}
+\end{table}
+
+In general, we conclude that SableWasm performs on par with Wasmtime on optimized and SIMD-enabled WebAssembly modules and better than Wasmtime and Wasmer for other benchmark cases, as shown in table~\ref{tbl:rq1-average}.
 
 
 \section[RQ2: Does optimization over input modules matter?]{
