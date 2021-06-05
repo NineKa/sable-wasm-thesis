@@ -90,9 +90,9 @@ The second benchmark suite we used in the Ostrich benchmark suite\cite{ostrich},
 \end{table}
 
 \paragraph{NPB}
-The last benchmark suite we selected for evaluating SableWasm is the NAS parallel benchmark suite \cite{npb}, shown in the table~\ref{tbl:npb}. We choose this benchmark because of its parallel nature, as the third research question focuses on the SIMD instruction operations. However, the original NPB benchmark suite is in Fortran, and, at the time of thesis writing, there is no cross-compiler between Fortran and WebAssembly. Hence, we choose an OpenMP variant instead \footnote{NPB OpenMP C: \url{https://github.com/benchmark-subsetting/NPB3.0-omp-C}}. Although the currently WASI-enable Clang does not support OpenMP, we can still cross-compile into WebAssembly, as OpenMP code trivially reduces to C.
+The last benchmark suite we selected for evaluating SableWasm is the NAS parallel benchmark suite \cite{npb}, shown in the table~\ref{tbl:npb}. We choose this benchmark because of its parallel nature, as the third research question focuses on the SIMD instruction operations. However, the original NPB benchmark suite is in Fortran, and, at the time of thesis writing, there is no cross-compiler from Fortran to WebAssembly. Hence, we choose an OpenMP variant instead \footnote{NPB OpenMP C: \url{https://github.com/benchmark-subsetting/NPB3.0-omp-C}}. Although the currently WASI-enable Clang does not support OpenMP, we can still cross-compile into WebAssembly, as OpenMP code trivially reduces to C.
 
-This section presents the benchmark environment and test cases for the experiment later in the chapter. One may notice some duplication among three benchmark suites, such as the upper-lower matrix decomposition (LU, ludcmp) and fast Fourier transform (FT, fft). However, we will still treat them as different individual test cases for all of them, as they come with various implementations and may lead to performance differences. Another problem that arises when preparing WebAssembly modules for benchmark suits is that some of the generated modules from the WASI-enabled Clang compiler have unexpected behaviour. In NPB, although the WASI-enabled Clang compile can successfully translate all test cases for all eight benchmark cases, there are two among eight test cases that have different behaviour compare to their native counterparts. For example, the WebAssembly module for the IS benchmark case has memory access out-of-bound for native and optimized translation. Also, the module for EP failed when compiled with the optimization flag enabled in the WASI-enabled Clang compiler. We suspect that some unknown bug in the toolchain may exist as it is still under active development. Another cause for the problem is that the OpenMP implementation may contain non-standard operations that result in undefined behaviour. We also test the generated modules against several other WebAssembly runtime environments, and the result is consistent. The last problem we encounter during benchmark is around WebAssembly SIMD operation extensions. As the extension is still under standardization, most runtime environments only support a subset of all instructions. Hence, when comparing SIMD operations, some of the benchmark results are infeasible. However, we still manage to collect SIMD operation performance data for most of the benchmark cases.
+This section presents the benchmark environment and test cases for the experiment later in the chapter. One may notice some duplication among three benchmark suites, such as the upper-lower matrix decomposition (LU, ludcmp) and fast Fourier transform (FT, fft). However, we will still treat them as different individual test cases for all of them, as they come with various implementations and may lead to performance differences. Another problem that arises when preparing WebAssembly modules for benchmark suits is that some of the generated modules from the WASI-enabled Clang compiler have unexpected behaviour. In NPB, although the WASI-enabled Clang compile can successfully translate all test cases for all eight benchmark cases, there are two among eight test cases that have different behaviour compare to their native counterparts. For example, the WebAssembly module for the IS benchmark case has memory access out-of-bound for native and optimized translation. Also, the module for EP failed when compiled with the optimization flag enabled in the WASI-enabled Clang compiler. We suspect that some unknown bug in the toolchain may exist as it is still under active development. Another possible cause for the problem is that the OpenMP implementation may contain non-standard operations that result in undefined behaviour. We also test the generated modules against several other WebAssembly runtime environments, and the result is consistent. The last problem we encounter during benchmark is around WebAssembly SIMD operation extensions. As the extension is still under standardization, most runtime environments only support a subset of all instructions. Hence, when comparing SIMD operations, some of the benchmark results are infeasible. However, we still manage to collect SIMD operation performance data for most of the benchmark cases.
 
 \section[RQ1: How does SableWasm perform compare to others?]{{\large RQ1: How does SableWasm perform compare to others?}}
 
@@ -327,7 +327,7 @@ In general, we conclude that SableWasm performs on par with Wasmtime on optimize
 
 The second problem we would like to investigate in the thesis is whether the optimization over input WebAssembly modules affects their performance in SableWasm. In theory, a perfect runtime system should recover all the missed possible optimization from a naive translated WebAssembly module, which we have seen in many other systems with two-phase compilation. The most well-known example is perhaps Java. The first compiler, \texttt{javac}, translates Java source files into bytecodes, and on the other hand, the Java virtual machine (JVM) generates naive executable binaries based on the bytecodes. \texttt{javac} will translate the source files faithfully, without complex transformation and optimization, while JVM optimizes the bytecodes effectively.  This design helps the system to achieve fast compilation while ensures the quality of the final generated code. Unfortunately, in the current SableWasm, the optimization over input WebAssembly modules does have a significant impact on the overall performance. When investigating the problem, we compare the SableWasm execution time under naive translated WebAssembly modules against their optimized counterparts.
 
-For most of the benchmarks, except \texttt{gramschmidt}, we have seen a significant performance increase for optimized WebAssembly modules, as shown in figure~\ref{fig:rq2}. Here we will take \texttt{trisolv} as an example. We found many optimizations missing when comparing the LLVM intermediate representation generated from a naive WebAssembly module against an optimized one. The most notable difference is perhaps function inlining and loop unrolling. In LLVM generated by naive WebAssembly module, SableWasm does not inline the primary function \texttt{kernel\_trisolv} into the main function. Thus, matrix size is pass through as arguments to the computation kernel, which holds SableWasm to unroll the internal nested for loops. We suspect that the translation patterns used in SableWasm when lowering WebAssembly bytecode into SableWasm MIR confuse the LLVM backend. Another interesting question is why \texttt{gramschmidt} has similar performance on both input WebAssembly modules. When we compare the LLVM intermediate representation for both inputs, we found that SableWasm can recover nearly all the optimization in the computation kernel. Additionally, the computation kernel for \texttt{gramschmidt} is extremely simple, only consisting of three non-nested for loops. This further confirms our theory on performance difference.
+For most of the benchmarks, except \texttt{gramschmidt}, we have seen a significant performance increase for optimized WebAssembly modules, as shown in figure~\ref{fig:rq2}. Here we will take \texttt{trisolv} as an example. We found many optimizations missing when comparing the LLVM intermediate representation generated from a naive WebAssembly module against an optimized one. The most notable difference is perhaps function inlining and loop unrolling. In LLVM generated by naive WebAssembly module, SableWasm does not inline the primary function \texttt{kernel\_trisolv} into the main function. Thus, matrix size is pass through as arguments to the computation kernel, which holds back SableWasm from unrolling the internal nested for loops. We suspect that the translation patterns used in SableWasm when lowering WebAssembly bytecode into SableWasm MIR confuse the LLVM backend. Another interesting question is why \texttt{gramschmidt} has similar performance on both input WebAssembly modules. When we compare the LLVM intermediate representation for both inputs, we found that SableWasm can recover nearly all the optimization in the computation kernel. Additionally, the computation kernel for \texttt{gramschmidt} is extremely simple, only consisting of three non-nested for loops. This further confirms our theory on performance difference.
 
 \section[RQ3: How much does SIMD extension improve in performance?]{
   {\large RQ3: How much does SIMD extension improve in performance?}}
@@ -366,32 +366,7 @@ For most of the benchmarks, except \texttt{gramschmidt}, we have seen a signific
 \end{figure}
 
 \begin{figure}
-    \begin{lstlisting}[language=C, basicstyle=\linespread{0.8}\ttfamily\small, numbers=left]
-void kernel_gemm(int ni, int nj, int nk,
-    DATA_TYPE alpha, DATA_TYPE beta,
-    DATA_TYPE POLYBENCH_2D(C,NI,NJ,ni,nj),
-    DATA_TYPE POLYBENCH_2D(A,NI,NK,ni,nk),
-    DATA_TYPE POLYBENCH_2D(B,NK,NJ,nk,nj)) {
-    int i, j, k;
-    
-    //BLAS PARAMS
-    //TRANSA = 'N'
-    //TRANSB = 'N'
-    // => Form C := alpha*A*B + beta*C,
-    //A is NIxNK
-    //B is NKxNJ
-    //C is NIxNJ
-    for (i = 0; i < _PB_NI; i++) {
-        for (j = 0; j < _PB_NJ; j++)
-            C[i][j] *= beta;
-            for (k = 0; k < _PB_NK; k++) {
-                for (j = 0; j < _PB_NJ; j++)
-                    C[i][j] += alpha * A[i][k] * B[k][j];
-             }
-        }
-    }
-}
-\end{lstlisting}
+    \lstinputlisting[language=C, basicstyle=\linespread{0.8}\ttfamily\small, numbers=left]{Code/6.Evaluation/gemm.kernel.c}
     \caption{Polybench \texttt{gemm} benchmark kernel}
     \label{fig:polybench-gemm-kernel}
 \end{figure}
