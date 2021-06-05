@@ -365,7 +365,35 @@ For most of the benchmarks, except \texttt{gramschmidt}, we have seen a signific
     \caption{Polybench \texttt{gemm} code snippet}
 \end{figure}
 
-The last question we would like to investigate in the thesis is how much WebAssembly SIMD operation extension improves performance compared to MVP WebAssembly. In this experiment, we compare the execution time between optimized WebAssembly modules and SIMD-enabled WebAssembly modules. Figure~\ref{fig:rq3} illustrates the experiment results. For most benchmark cases, the SIMD extension does not significantly improve the performance, except five in Polybench. Here we will take \texttt{gemm} as an example. Figure~\ref{fig:polybench-gemm-opt-code} shows a snippet from the kernel function and figure~\ref{fig:polybench-gemm-simd-code} is its counterpart in SIMD-enabled WebAssembly module.
+\begin{figure}
+    \begin{lstlisting}[language=C, basicstyle=\linespread{0.8}\ttfamily\small, numbers=left]
+void kernel_gemm(int ni, int nj, int nk,
+    DATA_TYPE alpha, DATA_TYPE beta,
+    DATA_TYPE POLYBENCH_2D(C,NI,NJ,ni,nj),
+    DATA_TYPE POLYBENCH_2D(A,NI,NK,ni,nk),
+    DATA_TYPE POLYBENCH_2D(B,NK,NJ,nk,nj)) {
+    int i, j, k;
+    
+    //BLAS PARAMS
+    //TRANSA = 'N'
+    //TRANSB = 'N'
+    // => Form C := alpha*A*B + beta*C,
+    //A is NIxNK
+    //B is NKxNJ
+    //C is NIxNJ
+    for (i = 0; i < _PB_NI; i++) {
+        for (j = 0; j < _PB_NJ; j++)
+            C[i][j] *= beta;
+            for (k = 0; k < _PB_NK; k++) {
+                for (j = 0; j < _PB_NJ; j++)
+                    C[i][j] += alpha * A[i][k] * B[k][j];
+             }
+        }
+    }
+}
+\end{lstlisting}
+    \caption{Polybench \texttt{gemm} benchmark kernel}
+    \label{fig:polybench-gemm-kernel}
+\end{figure}
 
-
-
+The last question we would like to investigate in the thesis is how much WebAssembly SIMD operation extension improves performance compared to MVP WebAssembly. In this experiment, we compare the execution time between optimized WebAssembly modules and SIMD-enabled WebAssembly modules. Figure~\ref{fig:rq3} illustrates the experiment results. For most benchmark cases, the SIMD extension does not significantly improve the performance, except five in Polybench. Here we will take \texttt{gemm} as an example. Figure~\ref{fig:polybench-gemm-kernel} illustrates the computation kernel of the benchmark, and it consists of a single nested loop that performs floating-point mathematics over two matrics. When SableWasm translation the optimized (\texttt{-O3}) input WebAssembly module, illustrated in figure~\ref{fig:polybench-gemm-opt-code}, it correctly performs loop interleaving on the inner for loop. However, the LLVM auto-vectorizer failed to transform the scalar code into a parallel form. On the other hand, in the case of SIMD-enabled WebAssembly module input (\texttt{-O3 -msimd128}), SableWasm takes the direct hint from the WASI-enabled clang compiler and correctly emit the 128-bit wide vector operations. We suspect that the frontend WASI-enable Clang compiler recognize the vectorizable pattern in both case, however, in the optimized (\texttt{-O3}), it scalarized the already vectorized code due to the limitations of the instruction set.
