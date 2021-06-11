@@ -6,7 +6,7 @@ followed by an introduction to WebAssembly and its standardized native system
 interface WASI. Finally, we will give a brief overview of the LLVM compilation
 framework.
 
-\section{Emscripten and asm.js}
+\section{Emscripten and Asm.js}
 
 In the past decade, web-based applications are gaining popularity, and due to
 the design of most browsers, programmers tend to choose JavaScript or its
@@ -157,7 +157,8 @@ the type of the function pointers allowed \footnote{Currently, the function type
   types.}. WebAssembly tables also introduce their initializer, \emph{element}
 segments. The \emph{element} segment is similar to the \emph{data} segment, but
 it initializes function pointers instead of bytes. Another difference between
-linear memories and indirect tables is that indirect tables are immutable after initialization to ensure the module's safety \footnote{This is subject to change
+linear memories and indirect tables is that indirect tables are immutable after
+initialization to ensure the module's safety \footnote{This is subject to change
   in the reference type extension}.
 
 \paragraph{Linear memory}
@@ -248,7 +249,7 @@ execute WebAssembly modules with impressive performance with only $4\%$ slower
 than WebAssembly reference implementation in most of the cases, and even $4\%$
 faster in PolybenchC.
 
-\section{WebAssembly extensions}
+\section{WebAssembly Extensions}
 
 In the previous section, we present the core part of WebAssembly published by
 the community in late 2016 as a minimal viable product (MVP). Although the
@@ -414,7 +415,7 @@ extensible and split into separate modules. Currently, the WASI group focuses
 on developing the core part that provides most of the POSIX interface, but it
 may add additional features in the future.
 
-\section{LLVM compiler infrastructure}
+\section{LLVM Compiler Infrastructure}
 
 In the last section of this chapter, we would like to have a quick overview of
 the compiler pipeline design and LLVM compilation framework. Designing a robust
