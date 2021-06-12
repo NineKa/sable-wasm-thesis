@@ -1,17 +1,43 @@
 \subsection{Instruction Reduction}
 
-This section will cover the instructions reduction rules used when lowering WebAssembly bytecode to SableWasm MIR. In the background chapter, we mentioned that one of WebAssembly's design goals is to be as compact as possible. When the community design the WebAssembly instruction set, they fuse several typical instruction sequences into single instructions. For example, SIMD vector operation extension defines \texttt{v128.load8x8\_s} which first load 8 single-byte integers into a vector, and then sign-extended them into 16 bit integers. Another example will be \texttt{v128.load32\_lane} which loads a 32-bit value, either a 32-bit integer or a single-precision floating-point number into a given vector. Such design is understandable for WebAssembly as binary size do matter when shipping application over the internet. But, for SableWasm, a static compiler, we focus more on the size of the instruction set instead of the size of the intermediate representation. It is harder to write analysis for a bloated instruction set, as one needs to consider more instruction cases. Hence, when lowering WebAssembly bytecode to SableWasm MIR, we replace some WebAssembly instructions with a sequence of SableWasm MIR instructions.
-
+This section will cover the instruction reduction rules used when lowering
+WebAssembly bytecode to SableWasm MIR. In the background chapter, we mentioned
+that one of WebAssembly's design goals is to be as compact as possible. When the
+community designed the WebAssembly instruction set, they fused several typical
+instruction sequences into single instructions. For example, SIMD vector
+operation extension defines \texttt{v128.load8x8\_s} which first load 8
+single-byte integers into a vector, and then sign-extends them into 16 bit
+integers. Another example will be \texttt{v128.load32\_lane} which loads a
+32-bit value, either a 32-bit integer or a single-precision floating-point
+number into a given vector. Such design is understandable for WebAssembly as
+binary size does matter when shipping applications over the internet. But, for
+SableWasm, a static compiler, we focus more on the size of the instruction set
+instead of the size of the intermediate representation. It is harder to write
+analysis for a bloated instruction set, as one needs to consider more
+instruction cases. Hence, when lowering WebAssembly bytecode to SableWasm MIR,
+we replace some WebAssembly instructions with a sequence of SableWasm MIR
+instructions.
 
 \paragraph{Eqz} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %n i32] i32.eqz $\Longrightarrow$ %t0 = i32.const 0; %t1 = int.eq %n %t0
 [..., %n i64] i64.eqz $\Longrightarrow$ %t0 = i64.const 0; %t1 = int.eq %n %t0
 \end{lstlisting}
-WebAssembly defines unary \texttt{eqz} operations for all integer values. As the name suggests, \texttt{eqz} compares the operand value against zero and yields to one if true, zero otherwise. In SableWasm MIR, we group all comparison instructions into \texttt{Compare} class, and \texttt{eqz} does not fit into the class as it is not a binary operation. Hence we rewrite the \texttt{eqz} as \texttt{Compare} instruction with opcode as \texttt{Eq}.
+WebAssembly defines a unary \texttt{eqz} operations for all integer values. As
+the name suggests, \texttt{eqz} compares the operand value against zero and
+yields one if true, zero otherwise. In SableWasm MIR, we group all comparison
+instructions into the \texttt{Compare} class, and \texttt{eqz} does not fit into
+the class as it is not a binary operation. Hence we rewrite the \texttt{eqz} as
+\texttt{Compare} instruction with opcode as \texttt{Eq}.
 
 \paragraph{Load} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32] i32.load offset=%offset align=%align $\Longrightarrow$
     %addr = int.add %base %offset
     memory.guard %mem %addr 4
@@ -26,10 +52,27 @@ WebAssembly defines unary \texttt{eqz} operations for all integer values. As the
     memory.guard %mem %addr 2
     %t0 = load.16 i32 %mem %addr
 \end{lstlisting}
-In SableWasm instruction design section, we introduce the \texttt{Load} and \texttt{MemoryGuard} in SableWasm MIR. A quick recap, SableWasm MIR \texttt{Load} instruction, compare to its WebAssembly counterpart, assumes access is in-bound, does not support offset attribute and always performs zero-extension on partial load. Hence, to properly support WebAssembly's \texttt{load} instructions, we need to reduce them with the strategy shown above. For load instructions that do not require an extension, such as \texttt{i32.load}, we first calculate the actual starting address, perform a memory boundary check with \texttt{MemoryGuard}, and then perform the memory read. On the other hand, for a partial load operation, we need first to perform the load operation using the same protocol as a normal load. Then, if the signed extension is needed, we add its corresponding cast instruction. In the example above, we demonstrate this with WebAssembly's \texttt{i32.load16\_s}. In this case, SableWasm append a \texttt{Cast} instruction with opcode \texttt{i32.extend.16} after the load operation.
+In the SableWasm instruction design section, we introduced the \texttt{Load} and
+\texttt{MemoryGuard} in SableWasm MIR. A quick recap, SableWasm MIR
+\texttt{Load} instruction, compare to its WebAssembly counterpart, assumes
+access is in-bound, does not support offset attribute and always performs
+zero-extension on partial loads. Hence, to properly support WebAssembly's
+\texttt{load} instructions, we need to reduce them with the strategy shown
+above. For load instructions that do not require an extension, such as
+\texttt{i32.load}, we first calculate the actual starting address, perform a
+memory boundary check with \texttt{MemoryGuard}, and then perform the memory
+read. On the other hand, for a partial load operation, we need first to perform
+the load operation using the same protocol as a normal load. Then, if sign
+extension is needed, we add its corresponding cast instruction. In the example
+above, we demonstrate this with WebAssembly's \texttt{i32.load16\_s}. In this
+case, SableWasm append a \texttt{Cast} instruction with opcode
+\texttt{i32.extend.16} after the load operation.
 
 \paragraph{Store} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32, %val i64] i64.store offset=%offset align=%align $\Longrightarrow$
     %addr = int.add %base %offset
     memory.guard %mem %addr 8
@@ -39,10 +82,26 @@ In SableWasm instruction design section, we introduce the \texttt{Load} and \tex
     memory.guard %mem %addr 2
     store.16 %mem %addr %val
 \end{lstlisting}
-Similar to the \texttt{Load} instruction we discussed earlier. \texttt{Store} instruction also assume the memory access is always in range and does not provide the offset attribute. However, \texttt{Store} instruction will always perform truncation instead of extension. Further, the only possible truncation is the bit-truncation by discarding bits starting from the most significant bit. The instruction reduction rules for WebAssembly \texttt{store} instructions is similar to those for \texttt{load} instructions. In the example above, we demonstrate the rules with \texttt{i64.load} and its partial store version, \texttt{i64.store16} which only stores the lowest two bytes into linear memory. SableWasm insert \texttt{MemoryGuard} instructions in a similar fashion comparing to \texttt{load} instructions. Note that we do not insert explicit \texttt{Cast} instruction to perform the truncation. \texttt{Store} instruction will implicitly truncate the value according to the store width; in this case, it will truncate the 64-bit integer into a 16-bit integer.
+Similar to the \texttt{Load} instruction we discussed earlier, the
+\texttt{Store} instruction also assumes the memory access is always in range and
+does not provide the offset attribute. However, a \texttt{Store} instruction
+will always perform truncation instead of extension. Further, the only possible
+truncation is the bit-truncation by discarding bits starting from the most
+significant bit. The instruction reduction rules for WebAssembly \texttt{store}
+instructions is similar to those for \texttt{load} instructions. In the example
+above, we demonstrate the rules with \texttt{i64.load} and its partial store
+version, \texttt{i64.store16} which only stores the lowest two bytes into linear
+memory. SableWasm inserts \texttt{MemoryGuard} instructions in a similar fashion
+to \texttt{load} instructions. Note that we do not insert an explicit
+\texttt{Cast} instruction to perform the truncation. A \texttt{Store}
+instruction will implicitly truncate the value according to the store width; in
+this case, it will truncate the 64-bit integer into a 16-bit integer.
 
 \paragraph{SIMD extension proposal reduction rules} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %lhs v128, %rhs v128] v128.andnot $\Longrightarrow$
     %t0 = v128.not %rhs 
     %t1 = v128.and %lhs %t0
@@ -55,10 +114,34 @@ Similar to the \texttt{Load} instruction we discussed earlier. \texttt{Store} in
     %t1 = cast i16x8.extend.low.i8x16.u %rhs
     %t2 = v128.int.mul i16x8 %t0 %t1
 \end{lstlisting}
-SIMD extension proposal introduces approximately 240 instructions into the WebAssembly instruction set. However, not all of them are simple single operation instructions. SIMD extension proposal also followqian xiqian xiqian xis WebAssembly's design goal, to ensure compactness of the generated program. The proposal presents reduction rules for several SIMD operation instructions, and in SableWasm, we take advantage of them to reduce the size of the instruction set. The first applicable instruction is \texttt{andnot} operation for vectors. The \texttt{andnot} is equivalent to perform bitwise on the right-hand-side operand, and then bitwise `and' operation between the left-hand-side operand and the temporary result. SableWasm reduce \texttt{andnot} into a pair of \texttt{not} instruction and \texttt{and} operation, as shown in the example above. The second group of reducible instructions is the \texttt{ExtMul} instructions. SIMD extension proposal defines \texttt{ExtMul} for all packed integer vectors except packed 64-bit integers. They are equivalent first to widen the vector using the appropriate extension and then multiply two operands. In the example above, we demonstrate with \texttt{i16x8.extmul\_low\_i8x16\_s} which perform \texttt{ExtMul} operation for packed 8-bit integers. SableWasm implements this instruction by first perform a signed extension on the lower half of the vector and multiply the temporary result as shown above. SableWasm also apply similar procedure to \texttt{i16x8.extmul\_low\_i8x16\_u}, except that it use zero-extension in \texttt{Cast} instruction instead of signed-extension.
+The SIMD extension proposal introduces approximately 240 instructions into the
+WebAssembly instruction set. However, not all of them are simple single
+operation instructions. The SIMD extension proposal also follows WebAssembly's
+design goal, to ensure compactness of the generated program. The proposal
+presents reduction rules for several SIMD operation instructions, and in
+SableWasm, we take advantage of them to reduce the size of the instruction set.
+The first applicable instruction is the \texttt{andnot} operation for vectors.
+The \texttt{andnot} is equivalent to performing bitwise `not' on the
+right-hand-side operand, and then a bitwise `and' operation between the
+left-hand-side operand and the temporary result. SableWasm reduces
+\texttt{andnot} into a pair of \texttt{not} instruction and \texttt{and}
+operation, as shown in the example above. The second group of reducible
+instructions is the \texttt{ExtMul} instructions. The SIMD extension proposal
+defines \texttt{ExtMul} for all packed integer vectors except packed 64-bit
+integers. They are equivalent to first widening the vector using the appropriate
+extension and then multiplying two operands. In the example above, we
+demonstrate with \texttt{i16x8.extmul\_low\_i8x16\_s} which performs an
+\texttt{ExtMul} operation for packed 8-bit integers. SableWasm implements this
+instruction by first performing a sign extension on the lower half of the vector
+and multiplying the temporary result as shown above. SableWasm also applies a
+similar procedure to \texttt{i16x8.extmul\_low\_i8x16\_u}, except that it uses
+a zero-extension in the \texttt{Cast} instruction instead of sign-extension.
 
 \paragraph{SIMD load with zero-padding} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32] v128.load32_zero offset=%offset align=%align $\Longrightarrow$
     %addr = int.add %base %offset
     memory.guard %mem %addr 4
@@ -66,20 +149,44 @@ SIMD extension proposal introduces approximately 240 instructions into the WebAs
     %t2 = const v128 0
     %t3 = v128.int.insert i32x4 0 %t2 %t1
 \end{lstlisting}
-WebAssembly SIMD extension proposal also introduces many variations of load operations. The first variation is the `zero-padding' load operation. The `zero-padding' load is equivalent to load a scalar from the linear memory and then insert it into a zero-initialized vector. We demonstrate this with the example above. In SableWasm MIR, we first load a scalar using the protocol we discussed above to load the 32-bit integer. Then, we insert it into a zero vector using \texttt{VectorInsert} instruction. The WebAssembly SIMD extension proposal defines `zero-padding' load operations for all packed integers and packed float-point numbers. The reduction rule for instructions with other vector shapes is similar to the pattern above.
+The WebAssembly SIMD extension proposal also introduces many variations of load
+operations. The first variation is the `zero-padding' load operation. The
+`zero-padding' load is equivalent to loading a scalar from the linear memory and
+then inserting it into a zero-initialized vector. We demonstrate this with the
+example above. In SableWasm MIR, we first load a scalar using the protocol we
+discussed above to load the 32-bit integer. Then, we insert it into a zero
+vector using \texttt{VectorInsert} instruction. The WebAssembly SIMD extension
+proposal defines `zero-padding' load operations for all packed integers and
+packed float-point numbers. The reduction rule for instructions with other
+vector shapes is similar to the pattern above.
 
 \paragraph{SIMD load and splat} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32] v128.load32_splat offset=%offset align=%align $\Longrightarrow$
     %addr = int.add %base %offset
     memory.guard %mem %addr 4
     %t1 = load.32 i32 %mem %addr
     %t2 = v128.int.splat i32x4 0 %t1
 \end{lstlisting}
-The second variation of SIMD vector load is the `load-and-splat' load operation. This type of load operation is a combination of scalar load operation and vector splat operation. It first loads a scalar from the linear memory and then broadcasts the value to all vector lanes. SableWasm uses a similar reduce rule compare to the `zero-padding' load operation, except that instead of inserting the scalar into a zero-initialized vector, we use \texttt{VectorSplat} to broadcast it. The example above demonstrate this with \texttt{v128.load32\_splat}. Similar to the `zero-padding' load operation, `load-and-splat' is defined for all packed integers and packed float-point numbers.
+The second variation of SIMD vector load is the `load-and-splat' load operation.
+This type of load operation is a combination of scalar load operation and vector
+splat operation. It first loads a scalar from the linear memory and then
+broadcasts the value to all vector lanes. SableWasm uses a similar reduce rule
+compare to the `zero-padding' load operation, except that instead of inserting
+the scalar into a zero-initialized vector, we use \texttt{VectorSplat} to
+broadcast it. The example above demonstrate this with
+\texttt{v128.load32\_splat}. Similar to the `zero-padding' load operation,
+`load-and-splat' is defined for all packed integers and packed float-point
+numbers.
 
 \paragraph{SIMD load lane} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32, %vec v128]
 v128.load32_lane offset=%offset align=%align lane=%lane $\Longrightarrow$
     %addr = int.add %base %offset
@@ -87,10 +194,31 @@ v128.load32_lane offset=%offset align=%align lane=%lane $\Longrightarrow$
     %t1 = load.32 i32 %mem %addr
     %t2 = v128.int.insert i32x4 %lane %base %t1
 \end{lstlisting}
-The next variation of the SIMD vector load operation is the `load-lane' load operation. The example above demonstrate the procedure with a sample of WebAssembly's \texttt{v128.load32\_lane}  which reads a 32-bit integer from linear memory and inserts it into a specific lane of a given vector. SableWasm first lowers the load semantic using the same protocol as we discussed above and then inserts to the given vector using the \texttt{VectorInsert} instruction. Again, the WebAssmebly SIMD extension proposal defines `load-lane' load operation for all shapes of packed integers and floating-point numbers. In WebAssembly SIMD load operation variations, one may already notice that we only have width associate with them instead of types. This is because WebAssembly SIMD operations do not distinguish the shape for the vector. Hence, there is no difference in load a 32-bit integer and a single-precision floating number, as they both consume 32-bit storage. But in SableWasm, we distinguish between packed integers and packed floating-point numbers for SIMD instruction shape record.  On the other hand, SableWasm also erases shape information from the vector value, and it is the responsibility of the instruction to interpret the value correctly. Thus, when we perform load operation, we always assume that we are loading packed integers. In the examples above, the 32-bit load with translate to `load a 32-bit integer'.
+The next variation of the SIMD vector load operation is the `load-lane' load
+operation. The example above demonstrate the procedure with a sample of
+WebAssembly's \texttt{v128.load32\_lane}  which reads a 32-bit integer from
+linear memory and inserts it into a specific lane of a given vector. SableWasm
+first lowers the load semantic using the same protocol as we discussed above and
+then inserts to the given vector using the \texttt{VectorInsert} instruction.
+Again, the WebAssmebly SIMD extension proposal defines `load-lane' load
+operation for all shapes of packed integers and floating-point numbers. In
+WebAssembly SIMD load operation variations, one may already notice that we only
+have a width associate with them instead of types. This is because WebAssembly
+SIMD operations do not distinguish the shape for the vector. Hence, there is no
+difference in loading a 32-bit integer and a single-precision floating number,
+as they both consume 32-bit storage. But in SableWasm, we distinguish between
+packed integers and packed floating-point numbers for the SIMD instruction shape
+record. On the other hand, SableWasm also erases shape information from the
+vector value, and it is the responsibility of the instruction to interpret the
+value correctly. Thus, when we perform a load operation, we always assume that
+we are loading packed integers. In the examples above, the 32-bit load with
+translate to `load a 32-bit integer'.
 
 \paragraph{SIMD load and extend} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32] v128.load16x4_s offset=%offset align=%align $\Longrightarrow$
     %addr = int.add %base %offset
     memory.guard %mem %addr 8
@@ -102,10 +230,36 @@ The next variation of the SIMD vector load operation is the `load-lane' load ope
     %t1 = load.64 v128 %addr 8
     %t2 = cast i32x4.extend.low.i16x8.u %t1
 \end{lstlisting}
-The last variation of load operation is the `load-and-extend' load operation. It is a combination of partial load and extension on the lower half of 128-bit vectors. In the example above we present examples for \texttt{v128.load16x4\_s} and \texttt{v128.load16x4\_u}. The previous instruction loads four 16-bit integers into lower lanes of the vector and performs signed-extension on the result to get a packed 32-bit integer vector. \texttt{v128.load16x4\_u} performs a similar operation, except that it performs zero-extension instead of signed-extension. A quick reminder, SableWasm MIR \texttt{Load} instruction can apply to any primitive value type and supports partial loading by annotating with a smaller load-width. In the case of the partial load, SableWasm MIR \texttt{Load} always loads bytes starting from the least significant bit and performs zero-extension on the result. SableWasm takes advantage of \texttt{Load} instruction's design when lowering the `load-and-extend' load operation. In the example above, we partially load a 128-bit vector with a 64-bit value which corresponds to loading four 16-bit integers from the linear memory. Note that this \texttt{Load} instruction yields a vector of 16-bit integers with four zero values in its higher lanes and loaded values in its lower lanes. Thus, we only need to perform a \texttt{Cast} operation with opcode \texttt{i32x4.extend.low.i16x8.s} to reach to the desired result. SableWasm treats \texttt{v128.load16x4\_u} using similar procedure, except that it use zero-extension instead of signed-extension. Finally, like other load operation variations discussed above, WebAssembly defines the `load-and-extend' load operation for all packed integer and packed floating-point numbers.
+The last variation of a load operation is the `load-and-extend' load operation.
+It is a combination of partial load and extension on the lower half of
+128-bit vectors. In the example above we present examples for
+\texttt{v128.load16x4\_s} and \texttt{v128.load16x4\_u}. The previous
+instruction loads four 16-bit integers into the lower lanes of the vector and
+performs sign-extension on the result to get a packed 32-bit integer vector.
+\texttt{v128.load16x4\_u} performs a similar operation, except that it performs
+zero-extension instead of sign-extension. A quick reminder, SableWasm MIR
+\texttt{Load} instruction can apply to any primitive value type and supports
+partial loading by annotating with a smaller load-width. In the case of the
+partial load, SableWasm MIR \texttt{Load} always loads bytes starting from the
+least significant bit and performs zero-extension on the result. SableWasm takes
+advantage of the \texttt{Load} instruction's design when lowering the
+`load-and-extend' load operation. In the example above, we partially load a
+128-bit vector with a 64-bit value which corresponds to loading four
+16-bit integers from the linear memory. Note that this \texttt{Load} instruction
+yields a vector of 16-bit integers with four zero values in its higher lanes and
+loaded values in its lower lanes. Thus, we only need to perform a \texttt{Cast}
+operation with opcode \texttt{i32x4.extend.low.i16x8.s} to reach the desired
+result. SableWasm treats \texttt{v128.load16x4\_u} using a similar procedure,
+except that it uses zero-extension instead of sign-extension. Finally, like
+other load operation variations discussed above, WebAssembly defines the
+`load-and-extend' load operation for all packed integer and packed
+floating-point numbers.
 
 \paragraph{SIMD store lane} \quad
-\begin{lstlisting}[basicstyle=\linespread{1}\small\ttfamily, language=SableWasmMIR, mathescape=true]
+\begin{lstlisting}[
+    basicstyle=\linespread{1}\small\ttfamily, 
+    language=SableWasmMIR, 
+    mathescape=true]
 [..., %base i32, %val v128]
 v128.store32_lane offset=%offset align=%align lane=%lane $\Longrightarrow$
     %addr = int.add %base %offset
@@ -113,4 +267,13 @@ v128.store32_lane offset=%offset align=%align lane=%lane $\Longrightarrow$
     %t1 = v128.int.extract i32x4 %val %lane
     store.32 %mem %addr %t1
 \end{lstlisting}
-Similar to `load-lane' load operation variation, the WebAssembly SIMD extension proposal also defines direct lane store instruction for 128-bit vectors. The above example demonstrates the reduced rules for these instructions. Let's take \texttt{v128.store32\_lane} as example. SableWasm MIR first calculates the address and setup memory boundary check use a similar protocol as we have seen above. Then, it extracts the lane value by using \texttt{VectorExtract} instruction and stores them into linear memory. Like WebAssembly load instructions, the store instruction does not distinguish between packed integers from packed floating-point numbers. In SableWasm, we always assume the store vector is packed integers.
+Similar to `load-lane' load operation variation, the WebAssembly SIMD extension
+proposal also defines direct lane store instruction for 128-bit vectors. The
+above example demonstrates the reduced rules for these instructions. Let's take
+\texttt{v128.store32\_lane} as example. SableWasm MIR first calculates the
+address and sets up a memory boundary check use a protocol similar to what we
+have seen above. Then, it extracts the lane value by using
+\texttt{VectorExtract} instruction and stores it into linear memory. Like
+WebAssembly load instructions, the store instruction does not distinguish
+between packed integers from packed floating-point numbers. In SableWasm, we
+always assume the store vector is packed integers.
