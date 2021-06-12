@@ -29,9 +29,9 @@ classic implementation for dominator tree construction.
 
 \paragraph{Formalisms}
 In the rest of the section, we will use $dom(\cdot)$ to represent the set of
-strict dominators for a given basic block. The set of strict dominators for
-$A$ is the set of dominators for $A$ subtracting $A$ itself. Hence, block $A$
-is a strict dominator for block $B$ implies that $A \in dom(B)$. Similarly,
+\emph{strict dominators} for a given basic block. The set of strict dominators
+for $A$ is the set of dominators for $A$ subtracting $A$ itself. Hence, block
+$A$ is a strict dominator for block $B$ implies that $A \in dom(B)$. Similarly,
 $BB_{idom}$ is a immediate dominator for basic block $A$, if and only if,
 $(BB_{idom} \in dom(A)) \land (\forall B \in dom(A), BB_{idom} \notin dom(B))$.
 Finally, the dominator tree represents all basic blocks with tree nodes and adds

@@ -1,0 +1,104 @@
+\subsection{Type Inference}
+
+This section presents the type system for SableWasm MIR. SableWasm MIR is a
+statically typed language with a pretty straightforward type system. However,
+one may already notice that SableWasm MIR does not annotate every instruction
+with a type, unlike many other compiler intermediate representations. Instead,
+SableWasm computes the types for values on-demand via a set of type inference
+rules. The type system for SableWasm MIR generalizes from the MVP WebAssembly
+type system along with its extension proposals with a few modifications. The
+formal definition for SableWasm MIR types are as follow,
+
+\begin{lstlisting}[basicstyle=\linespread{1}\ttfamily, mathescape=true]
+
+$\langle$primitive_type$\rangle$ ::= i32 | i64 | f32 | f64 | v128
+$\langle$tuple_type$\rangle$     ::= (N, $\langle$primitive_type$\rangle$$\dots$)
+$\langle$type$\rangle$           ::= $\langle$primitive_type$\rangle$ | $\langle$tuple_type$\rangle$ | () | $\bot$
+
+\end{lstlisting}
+
+Here we will skip the discussion for \emph{primitive type} and the type checking
+rules for its corresponding instructions as they are equivalent to the MVP
+WebAssembly type system. The \emph{tuple type} consists of an unsigned integer
+and a list of primitive types. They model the return types of multi-value return
+functions or \texttt{Pack} instructions. Finally, we introduce the unit type,
+$()$, and bottom type, $\bot$. One can consider the unit type as \texttt{void}
+in the C programming language. They represent no value present, but the type is
+valid. On the other hand, the bottom type, $\bot$, signals that the pass cannot
+assign any valid type to the term. In the rest of this section, we will focus
+our discussion on extensions made due to the major WebAssembly extension
+proposals, multi-value and SIMD operation.
+
+\paragraph{Multi-value}
+WebAssembly multi-value extensions allow functions to have more than one return
+values, which is quite interesting. Usually, low-level bytecode representation
+does not directly support this feature and it usually only appears in
+higher-level language designs, such as Python. In section 4.1.3, we introduced
+two instructions \texttt{Pack} and \texttt{Unpack}, along with how we represent
+multi-value for functions. As a quick recap, SableWasm uses tuples to denote the
+multi-value return for functions. The \texttt{Pack} instruction collects values
+and constructs a tuple containing them, while on the other hand, the
+\texttt{Unpack} extracts primitive values from tuples. Let's focus on the
+\texttt{Pack} instruction first. The typing rule for \texttt{Pack} is
+straightforward. If we can infer types for all candidate values, we say that the
+\texttt{Unpack} instruction has a tuple type consisting of the number of
+candidate values and a list of element types. On the other hand, if any of the
+candidate values result in a non-primitive type, the \texttt{Pack} instruction
+is $\bot$ type. More formally,
+$$
+    \frac
+    {\Gamma \vdash v_0 \Rightarrow t_0, \dots, v_n \Rightarrow t_n \qquad \forall i, t_i \in primitives}
+    {\Gamma \vdash \text{\textbf{pack} } v_0, \dots, v_n \Rightarrow \langle n, t_0 \dots t_n \rangle}
+    \qquad
+    \frac
+    {\Gamma \vdash \exists i, v_t \notin primitives}
+    {\Gamma \vdash \text{\textbf{pack} } v_0, \dots, v_n \Rightarrow \bot}
+$$
+Here the set $primitives$ is the set of all possible primitive types in the
+SableWasm MIR type system. For \texttt{Unpack} instructions, the type checker
+will first check if the immediate index is within the tuple size. If the index
+is out of bounds, the type checker will assign the instruction with bottom type
+$\bot$. Otherwise, it will take the type from the tuple specified by the index.
+Formally,
+$$
+    \frac
+    {\Gamma \vdash v \Rightarrow \langle n, t_0 \dots t_n \rangle \qquad 0 \leq k \leq n}
+    {\Gamma \vdash \text{\textbf{unpack } k v} \Rightarrow t_k}
+    \qquad
+    \frac
+    {\Gamma \vdash v \Rightarrow \langle n, t_0 \dots t_n \rangle \qquad \text{otherwise}}
+    {\Gamma \vdash \text{\textbf{unpack } k v} \Rightarrow \bot}
+$$
+We also generalize the function type in WebAssembly so that SableWasm MIR's
+function type will always have a single return value. We use the following
+strategy to map WebAssembly's function type into SableWasm MIR function type.
+In the case where there are no return values, we translate the return type into
+unit type. For example, SableWasm translate \texttt{[i32] -> []} into
+\texttt{[i32] -> ()}. On the other hand, if the function type has exactly one
+return value, the translation rule is trivial. Finally, when there are multiple
+return values, we pack them into a single tuple. For example, SableWasm use
+\texttt{[i32] -> (2, i32, f32)} to represent \texttt{[i32] -> [i32, f32]} in
+WebAssembly.
+
+\paragraph{SIMD operations}
+Section 4.1.3 presented the instruction design in SableWasm MIR. We mentioned
+that WebAssembly's 128-bit vector value, added by the SIMD operation extension
+proposal, does not store their shape information in the type. WebAssembly's
+design gives us two choices in SableWasm when designing a type system for vector
+operations. First, we can erase all the shape information for the value, and
+carefully plan the instruction semantics to make sure that all the operations
+have defined behaviour at runtime. Second, another approach is to add shape
+information back to the values' types. If there is a mismatch in shape
+information, either the translation visitor can insert a bit cast, or the type
+checker can reject the program. In SableWasm MIR, we take the first approach by
+erasing all the shape information from the vector values.
+Chapter~\ref{chapter:backend-and-runtime} will introduce the second approach in
+detail. The semantics for SIMD instructions in SableWasm MIR follows the
+WebAssembly's specification. We always store the value using the little-endian
+method, and the vectors start their first lane from the least significant bit.
+
+In this section, we talked about the type inference pass in SableWasm MIR.
+Similar to the dominator analysis we seen in section 4.3.1, the type infer pass
+does not optimize the control flow graph. But they are critical in the backend
+when we lower the SableWasm MIR into LLVM. We will come back to this in detail
+in chapter~\ref{chapter:backend-and-runtime}.
