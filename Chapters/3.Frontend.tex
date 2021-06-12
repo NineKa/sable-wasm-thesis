@@ -74,7 +74,8 @@ directly.
 Instruction extension parsers focus on another different aspect of the
 WebAssembly module. In the background section, we have visited several
 extensions that merged to the WebAssembly specification. A quick reminder,
-WebAssembly extensions can insert or modify the instructions defined in the minimum-viable-product (MVP)  specification. The SableWasm WebAssembly parser
+WebAssembly extensions can insert or modify the instructions defined in the
+minimum-viable-product (MVP) specification. The SableWasm WebAssembly parser
 employs instruction extension parsers to address this problem. When the parser
 intends to parse an instruction, it will iterate over all its instruction
 extension parsers in a chained manner. If the instruction opcode is not
