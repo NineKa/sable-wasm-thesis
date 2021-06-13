@@ -8,37 +8,7 @@ This section presents the setup for the experiments in the remaining part of the
 
 \begin{table}
     \centering
-    \begin{tabular}{|l|l|}
-        \hline
-        \textbf{Benchmark Name} & \textbf{Description}                                \\ \hline
-        2mm                     & 2 matrix multiplication (D = A.B; E = C.D)          \\ \hline
-        3mm                     & 3 matrix multiplication (E = A.B; F = C.D; G = E.F) \\ \hline
-        adi                     & alternating direction implicit solver               \\ \hline
-        atax                    & matrix transpose followed by vector multiplication  \\ \hline
-        bicg                    & BiCG sub kernel of BiCGStab linear solver           \\ \hline
-        cholesky                & Cholesky decomposition                              \\ \hline
-        correlation             & correlation computation                             \\ \hline
-        covariance              & covariance computation                              \\ \hline
-        doitgen                 & multiresolution analysis kernel (MADNESS)           \\ \hline
-        dynprog                 & dynamic programming (2D)                            \\ \hline
-        fdtd-2d                 & 2D finite different time domain kernel              \\ \hline
-        fdtd-apml               & FDTD using anisotropic perfectly matched layer      \\ \hline
-        gauss-filter            & gaussian filter                                     \\ \hline
-        gemm                    & matrix-multiply (C = alpha.A.B + beta.C)            \\ \hline
-        gramschmidt             & Gram-Schmidt decomposition                          \\ \hline
-        jacobi-1D               & 1D Jacobi stencil computation                       \\ \hline
-        jacobi-2D               & 2D Jacobi stencil computation                       \\ \hline
-        lu                      & LU decomposition                                    \\ \hline
-        ludcmp                  & LU decomposition (different implementation)         \\ \hline
-        mvt                     & matrix vector product and transpose                 \\ \hline
-        reg-detect              & 2D image processing                                 \\ \hline
-        seidel                  & 2D Seidel stencil computation                       \\ \hline
-        symm                    & symmetric matrix multiplication                     \\ \hline
-        syr2k                   & symmetric rank-2k operations                        \\ \hline
-        syrk                    & symmetric rank-k operations                         \\ \hline
-        trisolv                 & triangular solver                                   \\ \hline
-        trmm                    & triangular matrix multiplication                    \\ \hline
-    \end{tabular}
+    \input{Tables/Polybench}
     \caption{the Polyhedral benchmark suite (Polybench)}
     \label{tbl:polybench}
 \end{table}
@@ -48,22 +18,7 @@ The Polyhedral benchmark suite (Polybench) \cite{polybench} contains a group of 
 
 \begin{table}
     \centering
-    \begin{tabular}{|l|l|}
-        \hline
-        \textbf{Benchmark Name} & \textbf{Description}                                        \\ \hline
-        back-prop               & backward propagation in a layered neural network            \\ \hline
-        bfs                     & breadth-first search in a randomly generated graph          \\ \hline
-        crc                     & CRC error-detecting algorithm                               \\ \hline
-        fft                     & fast Fourier transform                                      \\ \hline
-        hmm                     & forward-backward algorithm over a hidden Markov model       \\ \hline
-        lavamd                  & 3D space particle simulation                                \\ \hline
-        lud                     & LU decomposition                                            \\ \hline
-        nqueens                 & N-queen problem solver                                      \\ \hline
-        nw (needle)             & find optimal alignment of two protein sequences             \\ \hline
-        page-rank               & page-rank algorithm to measure the importance of a web site \\ \hline
-        spmv                    & sparse matrix multiplication with a vector                  \\ \hline
-        srad                    & diffusion method for ultrasonic and radar imaging           \\ \hline
-    \end{tabular}
+    \input{Tables/Ostrich}
     \caption{the Ostrich benchmark suite (Ostrich)}
     \label{tbl:ostrich}
 \end{table}
@@ -73,18 +28,7 @@ The second benchmark suite we used in the Ostrich benchmark suite\cite{ostrich},
 
 \begin{table}
     \centering
-    \begin{tabular}{|l|l|}
-        \hline
-        \textbf{Benchmark Name} & \textbf{Description}                                 \\ \hline
-        IS                      & integer sort (bucket sort)                           \\ \hline
-        EP                      & Marsaglia polar method for generating random numbers \\ \hline
-        CG                      & estimate the smallest eigenvalue of a SPD matrix     \\ \hline
-        MG                      & multi-grid on a sequence of meshes                   \\ \hline
-        FT                      & fast Fourier transform                               \\ \hline
-        BT                      & block tri-diagonal solver                            \\ \hline
-        SP                      & scalar penta-diagonal solver                         \\ \hline
-        LU                      & lower-upper solver                                   \\ \hline
-    \end{tabular}
+    \input{Tables/NPB}
     \caption{the NAS parallel benchmark suite (NPB)}
     \label{tbl:npb}
 \end{table}
