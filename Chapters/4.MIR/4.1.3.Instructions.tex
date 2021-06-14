@@ -8,21 +8,21 @@ into basic blocks. A basic block represents the most extended instruction
 sequence without control flow transfer, such as branching. Note that for
 function calls, we take a similar approach to that of LLVM. We will come back
 to this in detail later in this section. Additionally, SSA requires that all
-values must have a unique definition site. Hence, in SSA form, the
+values must have unique definition sites. Hence, in SSA form, the
 use-definition chain is trivial to compute, while in a traditional CFG, one
 would need to extract this from the graph with the help of a \emph{reaching
-  definitions} analysis. The SableWasm instruction set is similar to WebAssembly
-bytecode in terms of semantics for most of the instructions. However, it
-operates over an infinite register machine instead of a stack-based machine, and
-in some cases semantics differ in order to keep the size of the SableWasm
-instruction minimal. In this section, we will cover the design and
-implementation of SableWasm instructions. The following section will cover the
-translation strategy between WebAssembly bytecode and the SableWasm instruction
-set and instruction reduction rules. Figure~\ref{fig:sablewasm-mir-inst}
-provides a general illustration of the design of the SableWasm instruction set.
-The SableWasm instruction set can currently cover all the instructions defined
-in WebAssembly specification, along with several extensions such as multivalue
-and SIMD vector operations.
+  definition} analysis. The SableWasm MIR instruction set is similar to
+WebAssembly bytecode in terms of semantics for most of the instructions.
+However, it operates over an infinite register machine instead of a
+stack-based machine, and in some cases, semantics differ in order to keep the
+size of the SableWasm instruction minimal. In this section, we will cover the
+design and implementation of SableWasm MIR instructions. The following section
+will cover the translation strategy between WebAssembly bytecode and the
+SableWasm MIR and instruction reduction rules.
+Figure~\ref{fig:sablewasm-mir-inst} provides a general illustration of the
+design of the SableWasm MIR instruction set. The SableWasm MIR instruction set
+can currently cover all the instructions defined in WebAssembly specification,
+including several extensions such as multivalue and SIMD vector operations.
 
 \begin{figure}
   \centering
@@ -32,58 +32,59 @@ and SIMD vector operations.
 \end{figure}
 
 \paragraph{Terminating instructions}
-As we discussed above, SableWasm splits the function control flow into basic
-blocks, which contain the maximum number of consecutive instructions without
+As discussed above, SableWasm splits the function control flow into basic
+blocks containing the maximum number of consecutive instructions without
 control flow transfer. In addition, SableWasm, similar to many other SSA form
 instruction sets, defines a particular group of instructions called terminating
 instructions. These instructions signal a control flow transfer out of the
 current basic block, and they must only appear as the last instruction in any
 given basic block. SableWasm defines four different terminating instructions:
-unreachable, unconditional branching, conditional branching and table branching.
-If the control flow reaches a \texttt{Unreachable} instruction, the runtime
-system will signal a runtime panic. The \texttt{Unreachable} instruction in
-SableWasm is identical to its counterpart in WebAssembly in terms of semantics.
-The \texttt{Unconditonal} instruction is an unconditional control flow transfer,
-as the name suggests. It refers to a target basic block as the operand. At
-runtime, the instruction will always transfer the control flow to the target
-basic block. \texttt{Unconditional} is similar to the \texttt{br} instruction
-defined in WebAssembly specification. On the other hand, \texttt{Conditional}
-is a conditional branching. It takes a value and two target basic blocks as its
-operands. At runtime, the instruction will compare the value against integral
-value zero. If the value equals zero, the instruction will transfer the control
-flow to the `false' basic block, otherwise, to the `true' basic block.
-SableWasm's \texttt{Conditional} instruction is similar to \texttt{br.cond}
-defined in WebAssembly. The last terminating defined in SableWasm is
-\texttt{Switch}. \texttt{Switch} instruction is comparable to the
-\texttt{br.table} instruction in WebAssembly. The instruction takes a value, a
-list of target basic blocks, and a default branching basic block as its
-operands. At runtime, \texttt{Switch} will interpret the value as an integral
-value and dispatch accordingly. If the value is within the branching list's
-range, it will redirect the control flow to the target basic block referred to
-by the index. Otherwise, \texttt{Switch} will transfer the control flow to the
-default basic block.
+unreachable, unconditional branching, conditional branching, and table
+branching. If the control flow reaches a \texttt{Unreachable} instruction,
+the runtime system will signal a runtime panic. The \texttt{Unreachable}
+instruction in SableWasm is identical to its counterpart in WebAssembly in
+terms of semantics. The \texttt{Unconditional} instruction is an unconditional
+control flow transfer, as the name suggests. It refers to a target basic block
+as the operand. At runtime, the instruction will always transfer the control
+flow to the target basic block. \texttt{Unconditional} is similar to the
+\texttt{br} instruction defined in WebAssembly specification. On the other hand,
+\texttt{Conditional} is a conditional branching. It takes a value and two
+target basic blocks as its operands. At runtime, the instruction will first
+compare the value against integral value zero. If the value equals zero, the
+instruction will transfer the control flow to the `false' basic block,
+otherwise, to the `true' basic block. SableWasm's \texttt{Conditional}
+instruction is similar to \texttt{br.cond} defined in WebAssembly. The last
+terminating instruction defined in SableWasm is \texttt{Switch}.
+\texttt{Switch} instruction is comparable to the \texttt{br.table} instruction
+in WebAssembly. The instruction takes a value, a list of target basic blocks,
+and a default branching basic block as its operands. At runtime,
+\texttt{Switch} will interpret the value as an integral value and dispatch
+accordingly. If the value is within the branching list's range, it will
+redirect the control flow to the target basic block referred to by the index.
+Otherwise, \texttt{Switch} will transfer the control flow to the default basic
+block.
 
 \paragraph{Function call}
 In SableWasm, we provide two instructions for function calls defined in
 WebAssembly specification: direct function calls and indirect function calls.
-\texttt{Call} defines a direct function call where the callee is known at
+\texttt{Call} represents a direct function call where the callee is known at
 compile time. It takes a function and a list of arguments as operands. On the
 other hand, \texttt{CallIndirect} defines an indirect function call. It
-implements the indirect function call protocol defined in the WebAssembly
+implements the indirect function call protocol described in the WebAssembly
 specification. A quick reminder, in WebAssembly, an indirect function call takes
-an indirect table, the table index, the expecting function type and a list of
+an indirect table, the table index, the expecting function type, and a list of
 values as arguments. At runtime, the system should first check if the index is
 valid for the indirect table and fetch the function pointer and its actual
 signature accordingly. Then, the system should compare the signature against the
-expecting type. If the signature matches the type, the runtime system will
+expecting type. If the signature matches, the runtime system will
 transfer the control flow to the function referred to by the function pointer.
 Implementing the signature verification mechanism is backend-specific; we will
 return to this topic in the next chapter. Note that we do not treat function
 call instructions as terminating instructions, even though they transfer the
 control flow to other locations. In SableWasm MIR, we follow the design like
-that used in the in LLVM intermediate representation, where it is assumed that
+that used in the LLVM intermediate representation, where it is assumed that
 the control flow will continue to the next instruction after returning from the
-function call. Hence, from the basic block's local point of view, their control
+function call. Hence, from the basic block's local perspective, their control
 flow is pre-determined, and there is no difference compared to other
 non-terminating instructions.
 
@@ -98,13 +99,13 @@ the WebAssembly specification for detailed information.
 \paragraph{Numerical operations}
 In SableWasm, we classify the numerical operations into three different
 categories, the \texttt{Compare} instructions, \texttt{Unary} instructions, and
-\texttt{Binary} instructions. The \texttt{Compare} instructions implements the
+\texttt{Binary} instructions. The \texttt{Compare} instructions implement the
 comparison between values, such as `equal to'. They always yield a 32-bit
 integer as WebAssembly specification suggests. The \texttt{Unary} and
 \texttt{Binary}, as their name suggests, perform unary and binary operations
 between values. The result of \texttt{Unary} and \texttt{Binary} instruction is
 dependent on the opcode. On the other hand, we can also orthogonally classify
-the instructions into integer, floating-point and packed integer and packed
+the instructions into integer, floating-point, packed integer, and packed
 floating-point numbers. Note that in MVP WebAssembly, there are only integer and
 floating-point value operations; the SIMD operation extension proposal adds the
 packed value operation to the instruction set. In the WebAssembly SIMD extension
@@ -117,17 +118,17 @@ or \texttt{SIMD128FPLaneInfo}. Figure~\ref{fig:sablewasm-mir-inst} shows all the
 classes of numerical operations defined in SableWasm. For detailed opcodes in
 each numerical instruction class, one can consult SableWasm's source code.
 
-\paragraph{Load and store}
+\paragraph{Load and Store}
 \texttt{Load} and \texttt{Store} instruction provides access to the linear
 memory for SableWasm MIR. Although in the current version of WebAssembly, the
 module can contain at most one linear memory, and all WebAssembly's load and
-store instructions implicitly refer to this linear memory \footnote{This subject
-  to change in the future version of WebAssembly.}. In SableWasm MIR, we take a
+store instructions implicitly refer to this linear memory \footnote{This might
+  change in the future version of WebAssembly.}. In SableWasm MIR, we take a
 different approach. The SableWasm MIR's \texttt{Load} instruction takes a linear
-memory and an integer value as operands. At runtime, the value will treat as the
-address (or offset) to the start of the linear memory, and the instruction
-yields the fetched result. In WebAssembly, the \texttt{load} instruction
-associates with a type and an extension method. For example,
+memory and an integer value as operands. At runtime, the value will be treated
+as the address (or offset) to the start of the linear memory, and the
+instruction yields the fetched result. In WebAssembly, the \texttt{load}
+instruction associates with a type and an extension method. For example,
 \texttt{i32.load8\_s} loads an 8-bit integer from the linear memory, and then
 sign extends the fetched byte into a 32-bit integer. In SableWasm, the
 \texttt{Load} instruction associates to a type and an integer value, namely the
@@ -138,13 +139,14 @@ Hence, when translating WebAssembly's sign-extended load into SableWasm's
 We will come back to this later in this chapter. The \texttt{Store} instruction
 also associate with a store width. Like the load width defined for \texttt{Load}
 instruction, the store width must also be equal to smaller than the store value
-type's width. At runtime, the system will first bit truncate the value and then
+type's width. The system will first bit truncate the value at runtime and then
 store the result into the linear memory. One may notice that in SableWasm, we
 erase the alignment attribute and offset attribute defined in WebAssembly.
 Currently, we do not support alignment hints from the WebAssembly module. In
-SableWasm, the load and store always have the alignment requirement of one byte.
-This implies that the load and store can happen anywhere in the linear memory,
-which corresponds to WebAssembly's linear memory specification.
+SableWasm, the \texttt{Load} and \texttt{Store} always have the alignment
+requirement of one byte. This implies that the \texttt{Load} and \texttt{Store}
+can happen anywhere in the linear memory, corresponding to WebAssembly's linear
+memory specification.
 
 \paragraph{Linear memory manipulation}
 WebAssembly specification defines two instruction that works with linear
@@ -152,8 +154,8 @@ memories: \texttt{memory.size}, \texttt{memory.grow}. Like the WebAssembly's
 \texttt{load} instruction we covered in the previous paragraph, all these
 instructions operate over the implicitly defined unique linear memory within the
 module. In SableWasm, we provide similar \texttt{MemoryGrow} and
-\texttt{MemorySize} instruction. The semantics of the SableWasm's memory
-manipulation instruction is the same as their WebAssembly counterparts, except
+\texttt{MemorySize} instruction. The semantics of SableWasm's memory
+manipulation instructions are the same as their WebAssembly counterparts, except
 that the linear memory needs to be explicitly stated. In SableWasm, we introduce
 one additional instruction, \texttt{MemoryGuard} which is an explicit memory
 boundary check. In WebAssembly, all \texttt{load} and \texttt{store} instruction
@@ -165,7 +167,7 @@ handling boundary checks, such as utilizing invalid virtual memory pages with
 the operating system's help. In this case, we only need to modify the
 translation pattern for \texttt{MemoryGuard}. \texttt{MemoryGuard} takes a
 linear memory and an integer value as the operand. It also associates with an
-integer immediate, known as tge guard width. At runtime, the system will perform
+integer immediate, known as the guard width. At runtime, the system will perform
 a boundary check over the linear memory starting from the given address to
 determine if it contains at least a given number of bytes ahead. If there are
 not enough bytes available, the system should signal a runtime panic.
@@ -176,7 +178,7 @@ WebAssembly multivalue specification \footnote{WebAssembly Multi-value Proposal:
 the function type. Functions now can return multiple values instead of at most
 one value. To support these features, we introduce \texttt{Pack} and
 \texttt{Unpack} instructions, along with extending WebAssembly's type system.
-\texttt{Pack} instructions group multiple values into an single ordered tuple,
+\texttt{Pack} instructions group multiple values into a single ordered tuple,
 while the \texttt{Unpack} reverse the operation by retrieving the value from
 tuples by index. In the case where a function returns multiple values, we thus
 use a tuple instead. SableWasm treats tuples as first-class values; however,
@@ -201,7 +203,7 @@ integer value. At runtime, the system extracts the value of the given lane and
 yields as a result. \texttt{VectorInsert} is similar to \texttt{insertelement}
 defined in LLVM. It will replace the vector operand with a given value and
 yields the updated vector as a result. Note that in the WebAssembly SIMD
-extension proposal there are more instructions defined that modify the
+extension proposal, there are more instructions defined that modify the
 individual lane value of the vector, such as \texttt{V128Load32Lane} which
 loads a 32-bit value into a specific lane within the vector. In this project,
 we would like to keep our instruction set simple; hence, these instructions are
@@ -212,11 +214,11 @@ instruction we introduced is the \texttt{VectorByteShuffle}.
 except that it allows rearranging bytes instead of lanes. Currently, the
 \texttt{VectorByteShuffle} only operates over an array of immediate integer
 values. Compare to the lane shuffle semantics, byte shuffle semantics provides
-more precise control over the result value. One can trivially simulate the lane
-shuffle with byte shuffle. The WebAssembly SIMD extension proposal only defines
-shuffle for \texttt{i8x16}, which corresponding to the byte shuffle semantics.
-However, in the future, if another shape vector supports shuffle operation, one
-can generalize the implementation with minimal modification.
+more precise control over the result value. One can trivially simulate a lane
+shuffle with a byte shuffle. The WebAssembly SIMD extension proposal only
+defines shuffle for \texttt{i8x16}, which corresponding to the byte shuffle
+semantics. However, in the future, if another shape vector supports shuffle
+operation, one can generalize the implementation with minimal modification.
 
 \paragraph{Cast}
 \texttt{Cast} models the conversion of values to their equivalent form in other
@@ -225,16 +227,16 @@ value extension. We treat signed and zero extensions as a kind of value
 conversion. The \texttt{Cast} instruction takes a single value as the operand,
 and it associates itself with a cast opcode. At runtime, it will perform the
 conversion according to the opcode, and if the result cannot be accurately
-represented in the target type, the system should signal an error. The cast
-opcodes are direct implementations of their WebAssembly counterparts, and we
-will skip the detail here. One may refer to the WebAssembly specification for
-more details.
+represented in the target type, the system should signal a runtime error.
+The cast opcodes are direct implementations of their WebAssembly counterparts,
+and we will skip the detail here. One may refer to the WebAssembly specification
+for more details.
 
 \paragraph{Intrinsic}
 The last SableWasm MIR instruction we are going to cover in this section is the
 \texttt{Intrinsic} instructions. Most WebAssembly instructions can be
 represented by using the SableWasm MIR instructions, which we covered earlier in
-the section. However, there are still several corner cases. For example, the
+this section. However, there are still several corner cases. For example, the
 WebAssembly SIMD extension proposal defines Q-format rounding multiplication, a
 type of fix-point multiplication, for packed 16-bit integers. Another example is
 the \texttt{swizzle} operation. A \texttt{swizzle} operation is similar to a
@@ -243,9 +245,9 @@ vector instead of an array of immediate integer values. These operations are
 only defined for a specific vector shape and will introduce unneeded complexity
 to the SableWasm MIR if we generalize them to all possible vector shapes. Hence,
 here we group these instructions as the \texttt{Intrinsic} instructions. There
-is no direct mapping to LLVM instruction, even with the intrinsic functions
-provided by the framework for most of them. Hence, the backend is encouraged to
-support these instructions with runtime library routines.
+is no direct mapping to LLVM instruction for most of them, even with the
+intrinsic functions provided by the framework. Hence, the backend is encouraged
+to support these instructions with runtime library routines.
 
 In this section, we discussed the design of the SableWasm MIR instruction set,
 and in the next section, we will move the translation strategy between

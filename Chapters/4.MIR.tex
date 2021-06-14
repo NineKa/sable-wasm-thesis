@@ -3,14 +3,14 @@
 This chapter describes SableWasm's middle-level intermediate representation
 (MIR), which has a critical role in the entire compilation pipeline. The MIR
 acts as a middle ground between the WebAssembly bytecode frontend and various
-possible backends. Currently SableWasm only implements one backend that utilizes
-the LLVM compilation framework, but adding more backend support should not
-require significant modification on the MIR. It also implements an analysis and
-transformation framework where we perform several optimizations over the MIR. We
-will first go over the overall design of the MIR, then later move to the
-translation strategy we used to translate WebAssembly bytecode to MIR. Finally,
-we will end the chapter with several analyses and transformations we
-implemented.
+possible backends. Currently, SableWasm only implements one backend that
+utilizes the LLVM compilation framework, but adding more backend support should
+not require significant modification on the MIR. It also implements an
+analysis and transformation framework where we perform several optimizations
+over the MIR. We will first go over the overall design of the MIR, then later
+move to the translation strategy we used to translate WebAssembly bytecode to
+MIR. Finally, we will end the chapter with several analyses and transformations
+we implemented.
 
 \section{MIR Design}
 
@@ -20,7 +20,7 @@ all instructions operate over an implicitly declared operand stack. There are
 several advantages of a stack-based IR. Perhaps the most important one is its
 portability. A stack-based IR makes fewer assumptions on the machine than a
 register-based one. One can even provide an implementation for a hypothetical
-machine with only one register. Another advantage is the code size. Experiments
+device with only one register. Another advantage is the code size. Experiments
 show that, in general, a stack-based IR is smaller in size than its
 corresponding registered version \cite{stack-and-register-vm}. When designing a
 binary format that ships executables over the internet, the stack-based IR seems
@@ -71,7 +71,7 @@ transformation.
 Figure~\ref{fig:mir-fibonacci} shows a simple function that calculates Fibonacci
 numbers with a recursive method in SableWasm MIR. With the help of the figure,
 we will go through the detailed design of SableWasm later in the chapter. We
-will first present the module-level entity design and their initializer
+will first present the module-level entity and their initializer
 expressions, such as functions, then move to the design of each instruction
 defined in MIR.
 

@@ -26,32 +26,32 @@ constructs in initializer expressions.
 \paragraph{Constant}
 The \texttt{Constant} instruction represents a single constant value for the
 initializer expression. In WebAssembly, a constant value can be one of the
-following: a 32-bit or 64-bit integer, a floating-pointer number or a 128-bit
+following: a 32-bit or 64-bit integer, a floating-pointer number, or a 128-bit
 SIMD vector \footnote{With WebAssembly SIMD128 extension}, and the specification
 encodes the type within the instruction opcode. Hence, there are multiple
 instructions in WebAssembly to introduce a constant. In SableWasm, we do not
 encode the type into the opcode, and \texttt{Constant} instruction is the only
 instruction that takes care of the task. In figure~\ref{fig:mir-fibonacci}, we
-have a constant initializer at line 6 that initializes the values of the global
+have a constant initializer at line 6 that initializes the value of the global
 to a 32-bit integer with a value that equals 66560. When querying the type of a
-\texttt{Constant} instruction, SableWasm will infer it from its payload
+\texttt{Constant} instruction, SableWasm will infer it according to its payload
 constant.
 
 \paragraph{GlobalGet}
 The \texttt{GlobalGet} instruction is exactly same as the WebAssembly's
-\texttt{global.get} in execution semantics. WebAssembly specification allows any
-initializer to refer to an imported \footnote{This might subject to change in
-  the future version of WebAssembly} global value. As these values are
-initialized before the module, reading the value from them is always valid
-during module initialization. The example in figure~\ref{fig:mir-fibonacci} does
-not provide an example of \texttt{GlobalGet} as an initializer expression, as
-they are less frequently used compared to constant initializer expression,
-especially for global values. However, in some ABI implementations, data section
-entries and element section entries require reading from global values serving
-as base pointers. SableWasm also infer the type for \texttt{GlobalGet}
-initializer expression in a similar fashion as \texttt{Constant}. In this case,
-the type of instruction is the same as the referred global variable without the
-`constant' modifier.
+\texttt{global.get} in terms of execution semantics. The WebAssembly
+specification allows any initializer expression to refer to an imported
+\footnote{This might subject to change in the future version of WebAssembly}
+global value. As these values are initialized before entering the module,
+reading their value is always valid during module initialization. The example
+in figure~\ref{fig:mir-fibonacci} does not provide an example of
+\texttt{GlobalGet} as an initializer expression, as they are less frequently
+used compared to constant initializer expression, especially for global values.
+However, in some ABI implementations, data section entries and element section
+entries require reading from global values serving as base pointers. SableWasm
+also infer the type for \texttt{GlobalGet} initializer expression in a similar
+fashion as \texttt{Constant}. In this case, the type of instruction is the same
+as the referred global variable without the `constant' modifier.
 
 In this section, we covered the design and implementation of initializer
 expressions in SableWasm. They are pretty simple in the current design. We will
