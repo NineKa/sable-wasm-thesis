@@ -12,7 +12,7 @@ simplification pass is similar to what one would expect in a peephole optimizer
 \cite{peephole-opt}. It iterates through the control flow graph, scans for
 matched patterns, and if it finds any optimization opportunities it will apply
 transformation strategies immediately. In the future, one may generalize this
-simplification pass into a fully-featured peephole optimizer.Using a
+simplification pass into a fully-featured peephole optimizer, using a
 domain-specific language for patterns similar to Alive
 \cite{alive, alive-in-lean} for LLVM to ensure extensibility and correctness of
 the patterns. The simplification pass will terminate once the execution reaches
@@ -41,15 +41,16 @@ nodes. Trivial $\phi$ nodes refer to the $\phi$ nodes with only one candidate
 value. In section 4.2.1, we present the translation patterns for \texttt{loop}
 instructions in WebAssembly and mentioned that the pattern is suboptimal and
 will result in trivial $\phi$ nodes. A quick reminder, the \texttt{loop}
-instruction needs to insert $\phi$ nodes to the landing BB, which necessarily
-has non-merging control flow as an effect of a limitation in our translation
-framework. To address this, we search for \texttt{\%t0 = phi t [\%t1, \%path]}
-for all possible type $t$. The transformation strategy is to replace all
-appearances of value \texttt{\%t0} with value \texttt{\%t1}. As the $\phi$ nodes
-do not map to any operations and are only introduced by SSA to explicitly mark
-value merging, removing them from the control flow graph does not change the
-semantics of the program. When replacing the values, SableWasm uses the use-site
-lists managed by the \texttt{ASTNode} to boost the performance.
+instruction needs to insert $\phi$ nodes to the landing basic block, which
+necessarily has non-merging control flow as an effect of a limitation in our
+translation framework. To address this, we search for
+\texttt{\%t0 = phi t [\%t1, \%path]} for all possible type $t$. The
+transformation strategy is to replace all appearances of value \texttt{\%t0}
+with value \texttt{\%t1}. As the $\phi$ nodes do not map to any operations
+and are only introduced by SSA to explicitly mark value merging, removing them
+from the control flow graph does not change the semantics of the program. When
+replacing the values, SableWasm uses the use-site lists managed by the
+\texttt{ASTNode} to boost the performance.
 
 \paragraph{Redundant branching}
 The second pattern focus on redundant branching. Redundant branching can also
@@ -70,10 +71,10 @@ into \texttt{\%BB:1}, and redirecting the branching in \texttt{\%BB:1} from
 \texttt{\%BB:4} to \texttt{\%exit}.
 
 \paragraph{Dead basic block}
-The third pattern we have in SableWasm to simplify control flow graph is dead
-basic block elimination. In figure~\ref{fig:simplify-example}, we have a dead
-basic block, namely \texttt{\%BB:2}. These dead basic blocks again come from
-SableWasm's translation patterns. When we are translating the control flow
+The third pattern we have in SableWasm to simplify the control flow graph is
+dead basic block elimination. In figure~\ref{fig:simplify-example}, we have a
+dead basic block, namely \texttt{\%BB:2}. These dead basic blocks again come
+from SableWasm's translation patterns. When we are translating the control flow
 constructs, we always prepare the landing basic block. However, in many cases,
 the control flow may not reach the landing basic block. In the example above,
 we have a WebAssembly \texttt{return} instruction appear in the \texttt{block}'s
@@ -85,9 +86,9 @@ blocks malformed. However, in many backends, these are considered bad behaviour.
 In addition, these basic blocks also interfere with other optimizations. In the
 example in figure~\ref{fig:simplify-example}, \texttt{\%BB:3} does not satisfy
 the redundant branching elimination pattern because it does not have a unique
-inward flow. However, one of them, \texttt{\%BB:2}, is a dead block. Thus, by
-removing dead basic blocks from the control flow graph, we may find more
-optimization opportunities. In SableWasm, we identify the dead basic block via
+inward flow. However, one of them, \texttt{\%BB:2}, is a dead block. Thus, we
+may find more optimization opportunities by removing dead basic blocks from the
+control flow graph. In SableWasm, we identify the dead basic block via
 a mark-and-sweep algorithm. Starting from the entry block, we mark all the basic
 blocks that are reachable. Then we iterate overall basic blocks, and if the
 basic block does not have the flag, we add them to the delete list. Finally, we
@@ -112,19 +113,20 @@ dead values come from WebAssembly's \texttt{drop} instruction which discards
 values from the implicit operand stack. In a non-SSA control flow graph, one
 usually needs first to perform \emph{liveness analysis} and \emph{reaching
     definition analysis} to determine if the value is dead. But in SSA, one can
-quickly recover this information from use-definition chain, and in SableWasm,
-the base class \texttt{ASTNode} automatically manages it. Thus, the optimizer
-will iterate over all values within the control flow graph and check if others
-refer to it. If not, it then verifies if the instruction is \emph{droppable}.
-A droppable instruction is an instruction such that if we remove it from the
-control flow graphs, no observable effects should happen, similar to the
-concept of `pure' for functions. Finally, if instructions are both dead and
-droppable, the optimizer will remove them from the control flow graph.
+quickly recover this information from the use-definition chain, and in
+SableWasm, the base class \texttt{ASTNode} automatically manages it. Thus, the
+optimizer will iterate over all values within the control flow graph and check
+if others refer to it. If not, it then verifies if the instruction is
+\emph{droppable}. A droppable instruction is an instruction such that if we
+remove it from the control flow graphs, no observable effects should happen,
+similar to the concept of `pure' for functions. Finally, if instructions are
+both dead and droppable, the optimizer will remove them from the control flow
+graph.
 
 In this section, we covered the flow graph simplification pass in SableWasm. The
 optimizer will iteratively run four patterns that we have discussed above until
 it reaches a fixed point. Figure~\ref{fig:simplify-result} shows the result of
 running these optimizations on the input shown in
-figure~\ref{fig:simplify-example}. Compared to the original, the result is more
-readable. Moreover, by reducing the number of basic blocks, we can improve other
-analyses in SableWasm.
+figure~\ref{fig:simplify-example}. Compared to the original, the simplified
+version is more readable. Moreover, by reducing the number of basic blocks, we
+can improve other analyses in SableWasm.

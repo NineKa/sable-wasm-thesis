@@ -118,13 +118,11 @@ interface. The second driver is the \texttt{SimpleFunctionPassDriver}. As its
 name suggests, it manages \texttt{FunctionPass} instead. \texttt{FunctionPass}
 implements intra-procedural analysis that operates over basic blocks. SableWasm
 currently implements multiple intra-procedural analyses, such as dominator tree
-construction and local variable numbering. We will cover these passes in detail
-in this section. The last driver in SableWasm is
-\texttt{SimpleForEachFunctionPassDriver} which is a wrapper class for
-\texttt{SimpleFunctionPassDriver}. It works with \texttt{FunctionPass} but takes
-a module as argument.
+construction. We will cover these passes in detail in this section. The last
+driver in SableWasm is \texttt{SimpleForEachFunctionPassDriver} which is a
+wrapper class for \texttt{SimpleFunctionPassDriver}. It works with
+\texttt{FunctionPass} but takes a module as an argument.
 
 \input{Chapters/4.MIR/4.3.1.Dominators and Dependence}
 \input{Chapters/4.MIR/4.3.2.Control-Flow Graph Simplification}
 \input{Chapters/4.MIR/4.3.3.Type Inference}
-%\input{Chapters/4.MIR/4.3.4.Redundant_Local_Variable_Elimination}

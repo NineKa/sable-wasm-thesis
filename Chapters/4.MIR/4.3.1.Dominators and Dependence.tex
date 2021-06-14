@@ -30,12 +30,12 @@ classic implementation for dominator tree construction.
 \paragraph{Formalisms}
 In the rest of the section, we will use $dom(\cdot)$ to represent the set of
 \emph{strict dominators} for a given basic block. The set of strict dominators
-for $A$ is the set of dominators for $A$ subtracting $A$ itself. Hence, block
-$A$ is a strict dominator for block $B$ implies that $A \in dom(B)$. Similarly,
-$BB_{idom}$ is a immediate dominator for basic block $A$, if and only if,
-$(BB_{idom} \in dom(A)) \land (\forall B \in dom(A), BB_{idom} \notin dom(B))$.
+for $A$ is the set of dominators for $A$ subtracting $A$ itself. Hence, `block
+$A$ is a strict dominator for block $B$' implies that $A \in dom(B)$. Similarly,
+$BB_{idom}$ is an immediate dominator for basic block $A$, if and only if,
+$BB_{idom} \in dom(A)) \land (\forall B \in dom(A), BB_{idom} \notin dom(B)$.
 Finally, the dominator tree represents all basic blocks with tree nodes and adds
-directed edges between them according to the immediate dominator relationship.
+directed edges according to the immediate dominator relationship.
 
 \paragraph{Dataflow analysis}
 The algorithm is a classic forward dataflow analysis. In this paragraph, we will
@@ -53,18 +53,18 @@ $$
     \left\{\{ A \} \cup \bigcap_{B \in pred(A)} dom(B)\right\}
 $$
 Here, $pred(\cdot)$ denotes the predecessor of the given basic block. The
-general idea is that for each of the basic blocks, a basic block that dominates
-all its predecessors must also dominate the given basic block. The stop criteria
+general idea is that a basic block that dominates all its predecessors must also
+dominate the given basic block for each of the basic blocks. The stop criteria
 for the dominator analysis are also quite simple. If there are no more changes
 in the result, the forward analysis will terminate.
 
 \paragraph{Implementation}
 SableWasm implements the forward dataflow analysis we discussed above with class
 \texttt{DominatorPass}. In addition, the analysis pass object shares its result
-map with a helper class \texttt{DominatorPassResult} which provides helper
+with a helper class \texttt{DominatorPassResult} which provides helper
 methods for accessing the result, such as calculating the immediate dominator
 and constructing the dominator tree from the result sets. Finally, SableWasm
-uses several techniques to improve the performance, such as modelling the set
+uses several techniques to improve the performance, such as modeling the set
 with sorted arrays.
 
 In this section, we presented the dominator analysis in SableWasm. The dominator
