@@ -1,15 +1,17 @@
 \chapter{Frontend}
 
-This chapter describes the frontend of SableWasm. The front end consists of two
-parts, the bytecode parser and validation pass. WebAssembly is a continuously
-evolving language, and its community might add new instructions in the future.
-Hence, the parser and the bytecode validation phase design closely follows
-WebAssembly's specification and is modular to ensure the framework's
-extensibility. A read-only view of the module structure provides additional
-functionality. The parser and validation phase design focuses on performance,
-both in execution time and memory footprint.
+This chapter describes the frontend of SableWasm. The frontend consists of two
+parts, the bytecode parser and the validation pass. WebAssembly is a
+continuously evolving language, and its community might add new instructions in
+the future. Hence, the design of the parser and the bytecode validation phase
+closely follows WebAssembly's specification and is modular to ensure the
+framework's extensibility. Additional functionalities are provided via a
+read-only view of the module structure. The design of the parser and the
+validation phase focuses on performance, both in execution time and memory
+footprint.
 
 \section{Bytecode Parser}
+
 One of WebAssembly's binary format design goals is to be simple to parse.
 Although open-source bytecode parsing and validation libraries have become
 available at this point, such as WABT \footnote{WebAssembly Binary Toolkit:
@@ -17,9 +19,9 @@ available at this point, such as WABT \footnote{WebAssembly Binary Toolkit:
 community, there was no suitable library at the time when the project starts.
 Thus, for SableWasm, we implemented our bytecode parsing frontend instead. The
 bytecode parser consists of three components: the byte-source reader,
-WebAssembly bytecode parser and parser delegate. This section will give a brief
-description of each component, and figure~\ref{fig:sablewasm-parser} presents a
-general illustration of the parser's design.
+WebAssembly bytecode parser and the parser delegate. This section will give a
+brief description of each component, and figure~\ref{fig:sablewasm-parser}
+presents a general illustration of the parser design.
 
 \begin{figure}
   \centering
@@ -29,16 +31,16 @@ general illustration of the parser's design.
 \end{figure}
 
 \paragraph{Byte-source reader}
-The byte-source reader consists of two parts, a byte-buffer reader and a
+The byte-source reader consists of two parts, the byte-buffer reader and the
 WebAssembly reader. The byte-buffer reader provides essential functionalities
 such as reading and skipping ahead. Additionally, the byte-buffer reader also
-needs to support rewind and enforce an end of stream barrier. Any out of bound
+needs to support rewind and enforce an end-of-stream barrier. Any out of bound
 access, either beyond the barrier or if the byte stream is exhausted, will
 signal via exceptions. On the other hand, the WebAssembly reader provides a
-richer interface to the parser, such as the abilities to decode LEB-128 encoded
+richer interface to the parser, such as the ability to decode LEB-128 encoded
 integers and parse WebAssembly value types. The WebAssembly reader is also
 responsible for validating the result before passing it to the parser. In the
-case the result is invalid, the reader throws exceptions similar to the
+case where the result is invalid, the reader throws exceptions similar to the
 byte-buffer reader.
 
 \paragraph{WebAssembly parser}
@@ -73,7 +75,7 @@ directly.
 
 Instruction extension parsers focus on another different aspect of the
 WebAssembly module. In the background section, we have visited several
-extensions that merged to the WebAssembly specification. A quick reminder,
+extensions that merged with the WebAssembly specification. A quick reminder,
 WebAssembly extensions can insert or modify the instructions defined in the
 minimum-viable-product (MVP) specification. The SableWasm WebAssembly parser
 employs instruction extension parsers to address this problem. When the parser
@@ -82,7 +84,7 @@ extension parsers in a chained manner. If the instruction opcode is not
 recognized by any registered instruction extension parser nor in the
 minimum-viable-product specification, the parser will signal the error by
 throwing an exception. An instruction extension parser can also override the
-default behaviour for MVP instructions by handling the instruction early,
+default behaviour for MVP instructions by handling instructions early,
 though, in the current version of WebAssembly, no extensions modify the
 semantics of these instructions. In this project, we implement two instruction
 extension parsers, the non-trapping-float-to-int conversion parser and SIMD
@@ -91,13 +93,14 @@ names suggest.
 
 \paragraph{Parser delegate}
 The last part of the SableWasm WebAssembly bytecode parser is the parser
-delegate. The parser delegate and parser are direct implementations of the
-common delegation patterns seen in many other projects, separating the parsing
-from the heavy lifting of module construction. One can implement a validation
-pass at this level without module construction. However, in this project, we
-implement our bytecode validation pass after the module construction, giving
-space for further projects focusing on bytecode-level transformation. We will
-discuss the implementation of such a validation pass later in the chapter.
+delegate. The parser delegate and the parser core directly implement
+the typical delegation pattern seen in many other projects, separating the
+parsing logic from the heavy lifting of module construction. One can implement
+a validation pass at this level without module construction. However, in this
+project, we implement our bytecode validation pass after the module
+construction, giving space for further projects focusing on bytecode-level
+transformation. We will discuss the implementation of such a validation pass
+later in the chapter.
 
 In this section, we gave a brief overview of the parser framework introduced in
 SableWasm. In the next section, we will discuss the WebAssembly bytecode
@@ -114,24 +117,24 @@ performance and ensure flexibility.
 \end{figure}
 
 The WebAssembly specification provides compact representations in both binary
-and text formats \cite{10.1145/3062341.3062363}, and these specifications might
-subject to change in the future. In SableWasm, we implement our bytecode
-representation as close to the specification as possible. Hence, in the future,
-if the community alters the specification, we can apply fixes to the bytecode
-representation in a straightforward manner without introducing extra complexity.
-In figure~\ref{fig:sablewasm-bytecode}, we present an illustration of the
-bytecode representation used in SableWasm. The WebAssembly bytecode
-representation in SableWasm consists of three layers: the module, the entities,
-and the instructions, which we will discuss in detail later in this section.
-Compared to the representation given in the WebAssembly specification, the only
-difference we have is the \texttt{Function}. The standard WebAssembly bytecode
-representation actually splits the function section into two different sections,
-namely \emph{function} and \emph{code}, to achieve its one-pass validation goal.
-The \emph{function} section contains the type of all functions defined in the
-module, similar to function declarations in other languages. Later in the
-module, the \emph{code} section defines them. On the other hand, in SableWasm,
-we merge these two sections into a single \texttt{Function}. A \texttt{Function}
-in SableWasm bytecode representation contains both its type and its definition.
+and text formats \cite{10.1145/3062341.3062363}, and might subject to change in
+the future. In SableWasm, we implement our bytecode representation as close to
+the specification as possible. Hence, in the future, if the community alters
+the specification, we can straightforwardly update the bytecode representation
+without introducing extra complexity. In figure~\ref{fig:sablewasm-bytecode},
+we present an illustration of the bytecode representation used in SableWasm.
+The WebAssembly bytecode representation in SableWasm consists of three layers:
+the module, the entities, and the instructions, which we will discuss in detail
+later in this section. Compared to the representation given in the WebAssembly
+specification, the only difference we have is the \texttt{Function}. The
+standard WebAssembly bytecode representation splits the function section into
+two different sections, \emph{function} and \emph{code}, to achieve its
+one-pass validation goal. The \emph{function} section contains the type of all
+functions defined in the module, similar to function declarations in other
+programming languages. Later in the module, the \emph{code} section defines
+them. On the other hand, in SableWasm, we merge these two sections into a single
+\texttt{Function} object. A \texttt{Function} in SableWasm bytecode
+representation contains both its type and body definition.
 
 \paragraph{WebAssembly module view}
 The WebAssembly module structure only serves as a storage container for the
@@ -163,15 +166,15 @@ operations, there are no operands attached to them. For example,
 it as a vector of packed single-precision floating-point values, round them to
 the nearest integer, and finally push the result back to the stack. From the
 bytecode representation point of view, there is no difference between multiple
-instances of the same instruction. Hence, to reduce memory consumption, we use
-pointers that point to object singletons to represent instructions without
-operands. However, this introduces a problem in distinguishing a pointer that
+instances of the same instruction. Hence, we use pointers that point to object
+singletons to represent instructions without operands to reduce memory
+consumption. However, this introduces a problem in distinguishing a pointer that
 points to an object from one referring to an actual heap-allocated object which
 requires memory deallocation. To address this problem, we use tagged pointers.
 For a non-heap allocated singleton object, we tag the least significant bit in
 the pointer with zero; and on the other hand, we tag that of a heap-allocated
-object pointer with one. Later, within the destructor, we only need to exam the
-least significant bit of the pointer and deallocate memory when needed. With
+object pointer with one. Later, we only need to examine the pointer's least
+significant bit within the destructor and deallocate memory when needed. With
 tagged pointer techniques, we can significantly reduce the memory needed to
 store the bytecode representations while maintaining their polymorphic nature.
 As less memory allocation is needed, we also observe performance improvement in
@@ -190,48 +193,46 @@ move to the validation pass implementation in SableWasm.
   \label{fig:sablewasm-validation}
 \end{figure}
 
-The WebAssembly specification defines a detailed static validation rule both for
+The WebAssembly specification defines detailed static validation rules both for
 well-formedness and type-soundness. Similar to the parser framework, we
 implement our validation pass as close to the specification as possible. If
 there are changes to the specification in the future, we can adopt them with
 minimal effort. The validation pass implementation consists of three parts:
-the validation context and validation visitor, implementing context and rules
-in the specification accordingly, and the trace collector used to recover the
-validation error site as illustrated in figure~\ref{fig:sablewasm-validation}.
-Later in the section, we will give a brief introduction to each of the
-components. The detailed validation rule, both well-formedness and
-type-soundness, are listed in the WebAssembly introduction paper
-\cite{10.1145/3062341.3062363}, and a separate paper that focuses on validation
-\cite{10.1145/3167082}. Note that these two papers only present the validation
-rules for the minimum viable product (MVP) WebAssembly, and each extension may
-modify the specification.  The additional validation rules introduced by the
-extensions adopted by SableWasm are relatively trivial. Hence, we will not give
-a detailed description, and one should consult the extension proposals for
-detailed information.
+the validation context, the validation visitor, and the trace collector as
+illustrated in figure~\ref{fig:sablewasm-validation}. Later in the section,
+we will give a brief introduction to each of the components. The detailed
+validation rule, both well-formedness and type-soundness, are listed in the
+WebAssembly introduction paper \cite{10.1145/3062341.3062363}, and a separate
+paper that focuses on validation \cite{10.1145/3167082}. Note that these two
+papers only present the validation rules for the minimum viable product (MVP)
+WebAssembly and each extension may modify the specification. The additional
+validation rules introduced by the extensions adopted by SableWasm are
+relatively trivial. Hence, we will not give a detailed description here, and one
+should consult the extension proposals for detailed information.
 
 \paragraph{Validation context}
-Validation context implements the contexts defined in the WebAssembly
+The validation context implements the context defined in the WebAssembly
 specification. It provides an easy way for the validation visitor to access the
 WebAssembly entities' declarations. The validation context itself does not
 perform any error signalling. The validation context also manages the operand
 stack and the label stack. The operand stack stores the type information
 gathered from the instruction within the expression while the label stack keeps
 track of the signatures of the control flow structures. The operand stack also
-records the requirements generated from a sequence of unknown type variables and
-checks if there are contradictions among them.
+records the requirements generated from type variable sequences and checks if
+there are contradictions among them.
 
 \paragraph{Validation visitor}
 The validation visitor is the core driver part of the validation pass. It
 implements all the validation rules for each instruction and derives from the
 visitor template. In the current state of implementation, the design of the
-validation visitor is not modular, and if there are additional instructions add
-to the project later, direct modification is required. The validation visitor
-also handles all the error signalling. However, it does not construct the error
-objects by itself. The task is deferred to the trace collector. For most of the
-instructions, the validation rule is quite simple, involves only popping and
-pushing values to the operand stack. Currently, the validation visitor will stop
-at the first error it encounters due to the design of the WebAssembly validation
-rules.
+validation visitor is not modular, and hence, if additional instructions are
+added to the project later, direct modification is required. The validation
+visitor also handles all the error signalling. However, it does not construct
+the error objects by itself. The task is deferred to the trace collector. For
+most of the instructions, the validation rule is quite simple, involves only
+popping and pushing values to the operand stack. Currently, the validation
+visitor will stop at the first error it encounters due to the WebAssembly
+validation rules' design.
 
 \paragraph{Trace collector}
 The last part of the validation pass implementation is the trace collector. It
@@ -239,7 +240,7 @@ locates the position of the instruction that currently undergoes validation. It
 first keeps track of the section where the instruction lives with an enumeration
 and uses a stack to track how to locate it. Every time the validation visitor
 enters a nested construct such as \texttt{if}, \texttt{block} or \texttt{loop},
-it pushes the construct to the site stack, and pops when a nested expression
+it pushes the construct to the site stack and pops when a nested expression
 finishes validation. If the validation visitor locates an error, the trace
 collector will build the error by moving the trace stack into the error object.
 
@@ -286,8 +287,8 @@ The WebAssembly binary toolkit (WABT) we used during the benchmark is version
 command. This command should parse the WebAssembly module, construct an internal
 bytecode representation, and finally perform a validation pass over it. This
 procedure is similar to what we used in the SableWasm frontend. For the
-execution speed experiment, we time the execution speed with shell builtin
-\texttt{time} command. We perform ten runs of each implementation in total and
+execution speed experiment, we time the execution speed with the shell builtin
+\texttt{time} command. We perform ten runs for each implementation in total and
 then compute the average execution speed. For memory footprint, we use the
 Massif tool provided by Valgrind \cite{valgrind-paper}. Massif is a heap
 profiler that collects heap memory usage throughout a program lifetime, which we
@@ -311,19 +312,19 @@ consumes approximately 108MiB at peak while WABT uses around 506MiB, suggesting
 a 4.6x reduction in memory footprint. More specifically, SableWasm spends about
 38MiB for bytecode representation, and WABT takes roughly 64MiB, indicating a
 1.7x reduction for bytecode representation only. Note that in SableWasm's heap
-memory trace, we can accurately determine the consumption of bytecode
+memory trace, we can accurately determine the memory consumption of bytecode
 representation using debug symbols. However, this is not the case for WABT,
 where the debug information is stripped from the executable. In this experiment,
 we estimate the memory consumption for bytecode representation via the vector
 that contains the opcode.
 
-Overall the SableWasm frontend implementation performs better than WABT in both
-terms of execution speed and memory consumption. Of course, SableWasm is a
+Overall the SableWasm frontend implementation performs better than WABT in
+terms of both execution speed and memory footprint. Of course, SableWasm is a
 static compiler that will only perform parsing and validation at compile-time
 and does not affect the overall execution time for emitted executables. However,
 in the future, if one would like to implement a just-in-time (JIT) style
-compiler, SableWasm parsing and validation frontend can effectively improve the
-response time of the JIT compiler.
+compiler, the SableWasm parsing and validation frontend can effectively improve
+the response time of the JIT compiler.
 
 We visited the design and implementation of the SableWasm frontend, which takes
 care of parsing, validating and constructing a bytecode representation in this
