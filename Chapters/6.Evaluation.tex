@@ -284,21 +284,6 @@ For most of the benchmarks, except \texttt{gramschmidt}, we have seen a signific
 
 \begin{figure}
     \centering
-    \begin{subfigure}{\textwidth}
-        \lstinputlisting[basicstyle=\linespread{0.5}\ttfamily\small, language=LLVM, numbers=left]{Code/6.Evaluation/gemm.opt.ll}
-        \caption{Optimized}
-        \label{fig:polybench-gemm-opt-code}
-    \end{subfigure}
-    \begin{subfigure}{\textwidth}
-        \lstinputlisting[basicstyle=\linespread{0.5}\ttfamily\small, language=LLVM, numbers=left]{Code/6.Evaluation/gemm.simd.ll}
-        \caption{SIMD-enabled}
-        \label{fig:polybench-gemm-simd-code}
-    \end{subfigure}
-    \caption{Polybench \texttt{gemm} code snippet}
-\end{figure}
-
-\begin{figure}
-    \centering
     \begin{subfigure}[t]{\textwidth}
         \includegraphics[width=\textwidth]{Images/6.3.RQ3/polybench-simd-speedup}
         \caption{Polybench}
@@ -315,8 +300,23 @@ For most of the benchmarks, except \texttt{gramschmidt}, we have seen a signific
     \label{fig:rq3}
 \end{figure}
 
+\begin{figure}
+    \centering
+    \begin{subfigure}{\textwidth}
+        \lstinputlisting[basicstyle=\linespread{0.5}\ttfamily\small, language=LLVM, numbers=left]{Code/6.Evaluation/gemm.opt.ll}
+        \caption{Optimized}
+        \label{fig:polybench-gemm-opt-code}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \lstinputlisting[basicstyle=\linespread{0.5}\ttfamily\small, language=LLVM, numbers=left]{Code/6.Evaluation/gemm.simd.ll}
+        \caption{SIMD-enabled}
+        \label{fig:polybench-gemm-simd-code}
+    \end{subfigure}
+    \caption{Polybench \texttt{gemm} code snippet}
+\end{figure}
+
 The last question we would like to investigate in the thesis is how much WebAssembly SIMD operation extension improves performance compared to MVP WebAssembly. In this experiment, we compare the execution time between optimized WebAssembly modules and SIMD-enabled WebAssembly modules. Figure~\ref{fig:rq3} illustrates the experiment results. For most benchmark cases, the SIMD extension does not significantly improve the performance, except for five cases in Polybench. Here we will take \texttt{gemm} as an example. Figure~\ref{fig:polybench-gemm-kernel} illustrates the computation kernel of the benchmark, and it consists of a single nested loop that performs floating-point mathematics over two matrices. When translating the optimized (\texttt{-O3}) input WebAssembly module, illustrated in figure~\ref{fig:polybench-gemm-opt-code}, SableWasm correctly performs loop interleaving on the inner for loop. However, the LLVM auto-vectorizer failed to transform the scalar code into a parallel form. On the other hand, in the case of SIMD-enabled WebAssembly module input (\texttt{-O3 -msimd128}), SableWasm takes the direct hint from the WASI-enabled clang compiler and correctly emit the 128-bit wide vector operations.
 
 \section*{Conclusion}
 
-In this chapter, we evaluated the performance of SableWasm in three aspects. First, we compared SableWasm's performance against several other well-known WebAssembly runtime environments, Wasmtime and Wasmer. We concluded that SableWasm performs on par with Wasmtime when the input module is optimized and better in any other cases. Second, we investigated whether the optimization over input modules affects the system's overall performance. Unfortunately, SableWasm heavily relies on the frontend compiler to emit efficient code, as the gap between naive and optimized input modules is still quite significant. Finally, we evaluated the effectiveness of WebAssembly SIMD operation extensions. Our experiments identified several benchmark cases where explicit SIMD instructions make a measurable difference in the execution speed.
+In this chapter, we evaluated the performance of SableWasm in three aspects. First, we compared SableWasm's performance against several other well-known WebAssembly runtime environments, Wasmtime and Wasmer. We concluded that SableWasm performs on par with Wasmtime when the input module is optimized and better in any other cases. Second, we investigated whether the optimization over input modules affects the system's overall performance. Unfortunately, SableWasm heavily relies on the frontend compiler to emit efficient code, as the performance gap between naive and optimized input modules is still quite significant. Finally, we evaluated the effectiveness of WebAssembly SIMD operation extensions. Our experiments identified several benchmark cases where explicit SIMD instructions make a measurable difference in the execution speed.
