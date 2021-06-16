@@ -22,25 +22,29 @@ figure.
 \paragraph{Implementing a WebAssembly runtime system}
 Our first contribution is a standalone WebAssembly runtime environment with
 support for \emph{WebAssembly System Interface} (WASI). We first start by
-implementing a custom extensible parser frontend for WebAssembly binary format.
+implementing a custom extensible parser frontend for WebAssembly binary format,
+shown as the `Parser Frontend' in figure~\ref{fig:design}.
 We then define a middle-level representation for SableWasm. SableWasm MIR is a
 register-based control flow graph representation of the program, while, on the
 other hand, WebAssembly operates over a stack-based virtual machine. Hence,
 translating between them is nontrivial. Therefore, we design and implement a
-frontend code generator that lowers WebAssembly bytecode into SableWasm MIR.
+frontend code generator that lowers WebAssembly bytecode into SableWasm MIR,
+shown as the `Frontend Code Generator' in figure~\ref{fig:design}.
 SableWasm MIR plays a critical role in the SableWasm system. First, it provides
 a middle ground where we implement an extensible and straightforward
 optimization framework. With the help of the framework, we experiment several
 analyses and optimizations on SableWasm MIR. Second, SableWasm MIR also
 separates the frontend from the backend. Currently, we implement an
-ahead-of-time (AOT) compiler backend using the LLVM compiler infrastructure.
+ahead-of-time (AOT) compiler backend using the LLVM compiler infrastructure,
+shown as the `Backend Code Generator' in figure~\ref{fig:design}.
 However, there are several challenges when lowering SableWasm MIR into LLVM
 intermediate representation. For example, SableWasm MIR, similar to WebAssembly
 bytecode, utilizes several abstract high-level concepts such as linear memory
 and indirect function call. These operations cannot be trivially mapped to LLVM
 instructions and requires runtime library support. Hence, the last component of
 SableWasm is a runtime library that provides builtin runtime functions for the
-generated modules and defines an easy-to-use interface for the host system.
+generated modules and defines an easy-to-use interface for the host system,
+shown as the `SableWasm Runtime' in figure~\ref{fig:design}.
 
 \paragraph{Adding support for WebAssembly extensions}
 Our second contribution in this thesis is to experiment and adopt several
