@@ -20,7 +20,7 @@ sequences.
 
 \paragraph{Eqz} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %n i32] i32.eqz $\Longrightarrow$ %t0 = i32.const 0; %t1 = int.eq %n %t0
@@ -35,7 +35,7 @@ the class as it is not a binary operation. Hence we rewrite the \texttt{eqz} as
 
 \paragraph{Load} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32] i32.load offset=%offset align=%align $\Longrightarrow$
@@ -70,7 +70,7 @@ In this case, SableWasm appends a \texttt{Cast} instruction with opcode
 
 \paragraph{Store} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32, %val i64] i64.store offset=%offset align=%align $\Longrightarrow$
@@ -99,7 +99,7 @@ this case, it will truncate the 64-bit integer into a 16-bit integer.
 
 \paragraph{SIMD extension proposal reduction rules} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %lhs v128, %rhs v128] v128.andnot $\Longrightarrow$
@@ -139,7 +139,7 @@ a zero-extension in the \texttt{Cast} instruction instead of sign-extension.
 
 \paragraph{SIMD load with zero-padding} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32] v128.load32_zero offset=%offset align=%align $\Longrightarrow$
@@ -162,7 +162,7 @@ pattern above.
 
 \paragraph{SIMD load and splat} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32] v128.load32_splat offset=%offset align=%align $\Longrightarrow$
@@ -184,7 +184,7 @@ numbers.
 
 \paragraph{SIMD load lane} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32, %vec v128]
@@ -216,7 +216,7 @@ translate to `load a 32-bit integer'.
 
 \paragraph{SIMD load and extend} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32] v128.load16x4_s offset=%offset align=%align $\Longrightarrow$
@@ -257,7 +257,7 @@ floating-point numbers.
 
 \paragraph{SIMD store lane} \quad
 \begin{lstlisting}[
-    basicstyle=\linespread{0.7}\small\ttfamily, 
+    basicstyle=\linespread{1}\small\ttfamily, 
     language=SableWasmMIR, 
     mathescape=true]
 [..., %base i32, %val v128]

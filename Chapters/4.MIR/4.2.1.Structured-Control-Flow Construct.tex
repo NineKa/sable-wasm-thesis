@@ -18,13 +18,6 @@ patterns used for WebAssembly's structured-control-flow constructs, namely
   \label{fig:translate-block}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{Images/4.MIR/translate-if.pdf}
-  \caption{WebAssembly \texttt{if} translation pattern}
-  \label{fig:translate-if}
-\end{figure}
-
 \paragraph{Block}
 In the background chapter, we provide a general illustration of the three
 structured control flow constructs. As a quick recap, \texttt{block} is the
@@ -61,6 +54,12 @@ Figure~\ref{fig:translate-block} represents this with the bold line in the
 result operand value stack. The last step is to push the $m$ values back to the
 stack, as they are passed to the expression within the \texttt{block}.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{Images/4.MIR/translate-if.pdf}
+  \caption{WebAssembly \texttt{if} translation pattern}
+  \label{fig:translate-if}
+\end{figure}
 
 \paragraph{If}
 The next control-flow structure defined WebAssembly is \texttt{if}.
