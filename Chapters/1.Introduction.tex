@@ -109,22 +109,26 @@ search for factors contributing to the slow down in the system.
 
 This thesis consists of nine chapters in total, including the introduction
 chapter.
-Chapter 2 discusses the background information that helps the
-understanding rest of the thesis. It first presents the motivation for
+Chapter~\ref{chapter:background} discusses the background information that helps
+the understanding rest of the thesis. It first presents the motivation for
 WebAssembly and WebAssembly System Interface (WASI), followed by a brief
 overview of the LLVM intermediate representation.
-Chapter 3 to chapter 6 discusses the design of implementation of the
-SableWasm system. Chapter 3 starts with presenting the custom extensible and
+Chapter~\ref{chapter:frontend} to chapter~\ref{chapter:backend-and-runtime}
+discusses the design of implementation of the SableWasm system.
+Chapter~\ref{chapter:frontend} starts with presenting the custom extensible and
 efficient parser frontend for WebAssembly binary format.
-Chapter 4 continues the discussion of SableWasm by describing SableWasm MIR's
-design.
-Chapter 5 discusses the code generating strategies used when
-lowering WebAssembly bytecode to SableWasm MIR and the optimization framework.
-Chapter 5 also presents several optimization passes we experimented with the
-framework, such as control flow graph simplification and type inference.
-Chapter 6 illustrates the last component of SableWasm, the LLVM backend and the
-runtime support library.
-In chapter 7, we investigate the performance of SableWasm by presenting
-benchmark results and discussing several possible theories for the slowdown.
-Finally, chapter 8 discusses related work and chapter 9 presents our conclusion
-along with future work.
+Chapter~\ref{chapter:mir-design} continues the discussion of SableWasm by
+describing SableWasm MIR's design.
+Chapter~\ref{chapter:mir-translation-optimization} discusses the code
+generating strategies used when lowering WebAssembly bytecode to SableWasm MIR
+and the optimization framework.
+Chapter~\ref{chapter:mir-translation-optimization} also presents several
+optimization passes we experimented with the framework, such as control flow
+graph simplification and type inference.
+Chapter~\ref{chapter:backend-and-runtime} illustrates the last component of
+SableWasm, the LLVM backend and the runtime support library.
+In chapter~\ref{chapter:evaluation}, we investigate the performance of SableWasm
+by presenting benchmark results and discussing several possible theories for the
+slowdown.
+Finally, chapter~\ref{chapter:related-work} discusses related work and
+chapter~\ref{chapter:conclusion} presents our conclusion along with future work.
