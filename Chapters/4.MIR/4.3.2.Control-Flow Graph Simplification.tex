@@ -1,6 +1,6 @@
 \subsection{Control-Flow Graph Simplification}
 
-In section 4.2, we illustrated the translation rule from WebAssembly bytecode to
+In section 5.2, we illustrated the translation rule from WebAssembly bytecode to
 SableWasm MIR. Unfortunately, the translation rules yield suboptimal control
 flow graphs. Hence, in this section, we will incrementally improve the control
 flow graphs by fixing several obvious issues we found, such as trivial $\phi$
@@ -38,7 +38,7 @@ a fixed point, where there are no more optimization opportunities.
 \paragraph{Trivial $\phi$ nodes}
 The first pattern we found in generated SableWasm MIR is the trivial $\phi$
 nodes. Trivial $\phi$ nodes refer to the $\phi$ nodes with only one candidate
-value. In section 4.2.1, we present the translation patterns for \texttt{loop}
+value. In section 5.1.1, we present the translation patterns for \texttt{loop}
 instructions in WebAssembly and mentioned that the pattern is suboptimal and
 will result in trivial $\phi$ nodes. A quick reminder, the \texttt{loop}
 instruction needs to insert $\phi$ nodes to the landing basic block, which

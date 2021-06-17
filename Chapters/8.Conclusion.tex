@@ -1,19 +1,88 @@
 \chapter{Future Work and Conclusion}
 
-WebAssembly grows in popularity in recent years as a new format for distributing sandboxed applications over the internet. In this project, we present SableWasm as a standalone ahead-of-time (AOT) compiler for translating WebAssembly modules into shared libraries. We also implement a runtime environment that enables other programming languages such as C/C++ to interact with generated shared libraries.
+WebAssembly has been growing in popularity in recent years as a new format
+for distributing sandboxed applications over the internet. In this project, we
+presented SableWasm as a standalone ahead-of-time (AOT) compiler for
+translating WebAssembly modules into shared libraries. We also implement a
+runtime environment that enables other programming languages such as C/C++ to
+interact with generated shared libraries.
 
-We first start the project with a custom parser for WebAssembly binary format. The parser focuses on extensibility and performance, as currently, WebAssembly still under the standardization process and several syntax extensions might be merged to the specification soon. We then evaluate the performance of the parser by benchmarking against \texttt{wabt}, the reference implementation provided by the WebAssembly community, and observe a 1.6x speedup in execution speed and a 4.6x reduction in memory footprint.
+We first started the project with a custom parser for WebAssembly binary format.
+The parser focuses on extensibility and performance, as currently, WebAssembly
+is still under the standardization process and several syntax extensions might
+be merged to the specification soon. We then evaluate the performance of the
+parser by benchmarking against \texttt{wabt}, the reference implementation
+provided by the WebAssembly community, and observe a 1.6x speedup in execution
+speed and a 4.6x reduction in memory footprint.
 
-We then define the middle-level representation (MIR) for SableWasm. SableWasm MIR is a register-based control flow graph representation of the WebAssembly program. When translating WebAssembly bytecode to SableWasm MIR, we focus on two significant problems. First, WebAssembly is a stack-based bytecode with structured control-flow structures. Thus, to faithfully translate the bytecode, we define translation patterns that mimic the semantics of these constructs and reduce them into basic blocks and branching instructions. The other problem we encountered is regarding the size of the instruction set. As WebAssembly encodes both type and shape information in the instruction opcode, the WebAssembly instruction set is considerably bloated. Additionally, to reduce the size of the module, WebAssembly fuses several typical instruction sequences into one single instruction, such as load-and-extend. To maintain a small instruction set, we define several reduction rules for WebAssembly instructions. Unfortunately, these translation patterns lead to awkward and inefficient code. To address this problem, we implement an analysis and transformation framework over SableWasm MIR. We then design the simplify control-flow graph pass that incrementally improves the MIR similar to a peephole optimization by locating and replacing several common redundant patterns.
+We then define the middle-level representation (MIR) for SableWasm. SableWasm
+MIR is a register-based control flow graph representation of the WebAssembly
+program. When translating WebAssembly bytecode to SableWasm MIR, we focus on
+two significant problems. First, WebAssembly is a stack-based bytecode with
+structured control flow structures. Thus, to faithfully translate the bytecode,
+we define translation patterns that mimic the semantics of these constructs and
+reduce them into basic blocks and branching instructions. The other problem we
+encountered is regarding the size of the instruction set. As WebAssembly encodes
+both type and shape information in the instruction opcode, the WebAssembly
+instruction set is quite large. Additionally, to reduce the size of the module,
+WebAssembly fuses several typical instruction sequences into one single
+instruction, such as load-and-extend. To maintain a small instruction set, we
+define several reduction rules for WebAssembly instructions. Unfortunately,
+these translation patterns lead to awkward and inefficient code. To address
+this problem, we implement an analysis and transformation framework over
+SableWasm MIR. We then design simplifying control flow graph pass that
+incrementally improves the MIR, similar to a `peephole optimization' by
+locating and replacing several common redundant patterns.
 
-The last component of SableWasm is the SableWasm runtime library, which provides implementations for built-in functions used in the generated shared libraries. It also implements several WebAssembly entities, such as linear memory and indirect table. Currently, the SableWasm runtime library defines an easy-to-use C/C++ interface to the user and handles errors and exceptions using the exception mechanism in C++.
+The last component of SableWasm is the SableWasm runtime library, which provides
+implementations for builtin functions used in the generated shared libraries.
+It also implements several WebAssembly entities, such as the linear memory and
+the indirect table. Currently, the SableWasm runtime library defines an
+easy-to-use C/C++ interface to the user and handles errors and exceptions
+using the exception mechanism in C++.
 
-Finally, we evaluate SableWasm's performance by benchmarking with three well-known benchmark suites, Polybench, Ostrich, and NPB. The first question we focus on in this thesis is how SableWasm performs compared to other existing WebAssembly runtime environments. We conclude that SableWasm performs on par with Wasmtime and approximately 1.5x to 2x faster than Wasmer. The second research question is whether optimization over input WebAssembly modules affects the overall performance in SableWasm. By comparing the execution time of SableWasm under optimized translated input modules against that of naive translated input modules, we conclude that, currently, optimization over the WebAssembly modules has a significant impact on the performance. Hence, when designing frontend compilers that target WebAssembly, one should be careful of translation patterns and perform optimizations as early as possible. The last question we investigated in the thesis is whether WebAssembly SIMD extension brings performance improvement to SableWasm. Using Polybench, we locate many common patterns that cannot be identified and rewritten by LLVM's auto-vectorizer in SableWasm.
+Finally, we evaluate SableWasm's performance by benchmarking with three
+well-known benchmark suites, Polybench, Ostrich, and NPB. The first question
+we focus on in this thesis is how SableWasm performs compared to other existing
+WebAssembly runtime environments. We conclude that SableWasm performs on par
+with Wasmtime and approximately 1.5x to 2x faster than Wasmer. The second
+research question is whether optimization over input WebAssembly modules
+affects the overall performance in SableWasm. By comparing the execution time
+of SableWasm under optimized translated input modules against that of naive
+translated input modules, we conclude that, currently, optimization over the
+WebAssembly modules has a significant impact on the performance. Hence, when
+designing frontend compilers that target WebAssembly, one should be careful of
+translation patterns and perform optimizations as early as possible. The last
+question we investigated in this thesis is whether the WebAssembly SIMD
+extension brings performance improvement to SableWasm. Experimentally, we can
+see significant benefit. However, using Polybench, we locate many common
+patterns that cannot be identified and rewritten by LLVM's auto-vectorizer
+in SableWasm.
 
 \section*{Future Work}
 
-WebAssembly is a relatively new language, and many of its features are still under the standardization phase. SableWasm only covers several WebAssembly extensions such as multi-value extension and SIMD operation extension. One excellent opportunity is to implement more WebAssembly extensions in SableWasm, such as garbage collection (GC) extension and exception handling extension. Currently, many high-level languages, such as AssemblyScript, require static linking with a non-trivial runtime library when cross-compiling into WebAssembly. Simulating these features results in notable increases in code size and a slow down in performance.
+WebAssembly is a relatively new language, and many of its features are still
+under the standardization phase. SableWasm only covers several WebAssembly
+extensions such as the multi-value extension and the SIMD operation extension.
+One excellent opportunity is to implement more WebAssembly extensions in
+SableWasm, such as the garbage collection (GC) extension and the exception
+handling extension. Currently, many high-level languages, such as
+AssemblyScript, require static linking with a non-trivial runtime library when
+cross-compiling into WebAssembly. Simulating these features results in notable
+increases in code size and a slow down in performance.
 
-Another interesting direction is to add more analysis and transformation in SableWasm under the optimization framework. More specifically, one can implement an auto-vectorizer in SableWasm at the MIR level. The evaluation chapter shows that the LLVM's auto-vectorizer cannot recognize many apparent patterns and yields inefficient code. We suspect that the boilerplate code introduced by the translation patterns confuses the auto-vectorizer. Hence, an auto-vectorizer at the SableWasm MIR level can better understand the program and, in theory, recover more opportunities within the WebAssembly modules.
+Another interesting direction is to add more analysis and transformation in
+SableWasm under the optimization framework. More specifically, one can implement
+an auto-vectorizer in SableWasm at the MIR level. The evaluation chapter shows
+that the LLVM's auto-vectorizer cannot recognize many apparent patterns and
+yields inefficient code. We suspect that the boilerplate code introduced by
+the translation patterns confuses the auto-vectorizer. Hence, an auto-vectorizer
+at the SableWasm MIR level can better understand the program and, in theory,
+recover more opportunities within the WebAssembly modules.
 
-Finally, one can also add more backend support for SableWasm. Currently, SableWasm is an ahead-of-time (AOT) compiler built on the LLVM compiler infrastructure. One natural extension of this project to implement a just-in-time (JIT) system that uses LLVM's Orc JIT framework. Additionally, one can also explore many profile-guided optimizations (PGO) techniques used in many other VM languages, such as Java bytecode \cite{java-pgo}.
+Finally, one can also add more backend support for SableWasm. Currently,
+SableWasm is an ahead-of-time (AOT) compiler built on the LLVM compiler
+infrastructure. One natural extension of this project to implement a
+just-in-time (JIT) system that uses LLVM's Orc JIT framework. Additionally,
+one can also explore many profile-guided optimizations (PGO) techniques used
+in many other VM languages, such as Java bytecode \cite{java-pgo}.

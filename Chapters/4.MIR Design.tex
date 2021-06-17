@@ -1,4 +1,5 @@
 \chapter{Middle-level Intermediate Representation}
+\label{chapter:mir-design}
 
 This chapter describes SableWasm's middle-level intermediate representation
 (MIR), which has a critical role in the entire compilation pipeline. The MIR
@@ -7,12 +8,10 @@ possible backends. Currently, SableWasm only implements one backend that
 utilizes the LLVM compilation framework, but adding more backend support should
 not require significant modification on the MIR. It also implements an
 analysis and transformation framework where we perform several optimizations
-over the MIR. We will first go over the overall design of the MIR, then later
-move to the translation strategy we used to translate WebAssembly bytecode to
-MIR. Finally, we will end the chapter with several analyses and transformations
-we implemented.
+over the MIR. We will first go over the overall design of the MIR, and
+later move to the translation rules and analysis framework in the
+chapter~\ref{chapter:mir-translation-optimization}. \\[12pt]
 
-\section{MIR Design}
 
 In the previous chapters, we covered the design of WebAssembly bytecode. A quick
 reminder, WebAssembly is a stack-based intermediate representation (IR) where
@@ -79,50 +78,3 @@ defined in MIR.
 \input{Chapters/4.MIR/4.1.2.Initializer Expr}
 \input{Chapters/4.MIR/4.1.3.Instructions}
 
-\section{Translating WebAssembly to MIR}
-
-In this section, we will cover the translation between WebAssembly bytecode and
-SableWasm MIR. We have covered the design of SableWasm MIR instructions
-previously. One may notice that for most of the instructions, especially for the
-numerical operations, SableWasm MIR shares the same semantics as WebAssembly.
-Hence, the translation rules for these instructions are pretty trivial, and we
-will not cover them in detail in this section. Instead, this section will focus
-on the translation rules for the structured control flow constructs and
-WebAssembly instructions that require reduction during translation.
-
-\input{Chapters/4.MIR/4.2.1.Structured-Control-Flow Construct}
-\input{Chapters/4.MIR/4.2.2.Instruction Reduction}
-
-\section{Analysis Framework}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{Images/4.MIR/analysis-framework.pdf}
-    \caption{SableWasm MIR Analysis and Optimization Framework}
-    \label{fig:sablewasm-mir-analysis-framework}
-\end{figure}
-
-SableWasm also implements an analysis and optimization framework over its
-middle-level intermediate representation (MIR). The framework consists of two
-parts, passes and drivers. The SableWasm analysis and transformation framework
-only provides essential support for managing passes, compared to other more
-advanced frameworks, such as McSAF\cite{mcsaf}, an optimization framework for
-MATLAB language. Figure~\ref{fig:sablewasm-mir-analysis-framework} illustrates
-the current state of the framework in SableWasm. Currently, we implement three
-different drivers. \texttt{SimpleModulePassDriver} accepts module passes and
-operates on the module level. At the time of thesis writing, we haven't explored
-inter-procedural analysis for SableWasm MIR in detail, and the only module pass
-implemented is the pretty-print pass. In the future, one can add additional
-inter-procedural analyses to SableWasm, by implementing the \texttt{ModulePass}
-interface. The second driver is the \texttt{SimpleFunctionPassDriver}. As its
-name suggests, it manages \texttt{FunctionPass} instead. \texttt{FunctionPass}
-implements intra-procedural analysis that operates over basic blocks. SableWasm
-currently implements multiple intra-procedural analyses, such as dominator tree
-construction. We will cover these passes in detail in this section. The last
-driver in SableWasm is \texttt{SimpleForEachFunctionPassDriver} which is a
-wrapper class for \texttt{SimpleFunctionPassDriver}. It works with
-\texttt{FunctionPass} but takes a module as an argument.
-
-\input{Chapters/4.MIR/4.3.1.Dominators and Dependence}
-\input{Chapters/4.MIR/4.3.2.Control-Flow Graph Simplification}
-\input{Chapters/4.MIR/4.3.3.Type Inference}
