@@ -1,4 +1,5 @@
 \subsection{Type Inference}
+\label{section:mir-opt-type-inference}
 
 This section presents the type system for SableWasm MIR. SableWasm MIR is a
 statically typed language with a pretty straightforward type system. However,
@@ -33,7 +34,8 @@ extension proposals, multi-value and SIMD operation.
 WebAssembly multi-value extensions allow functions to have more than one return
 values, which is quite interesting. Usually, low-level bytecode representation
 does not directly support this feature, and it usually only appears in
-higher-level language designs, such as Python. In section 4.3, we introduced
+higher-level language designs, such as Python. In
+section~\ref{section:mir-design-insts}, we introduced
 two instructions \texttt{Pack} and \texttt{Unpack}, along with how we represent
 multi-value for functions. As a quick recap, SableWasm uses tuples to denote the
 multi-value return for functions. The \texttt{Pack} instruction collects values
@@ -81,7 +83,8 @@ return values, we pack them into a single tuple. For example, SableWasm use
 WebAssembly.
 
 \paragraph{SIMD operations}
-Section 4.3 presented the instruction design in SableWasm MIR. We mentioned
+Section~\ref{section:mir-design-insts} presented the instruction design in
+SableWasm MIR. We mentioned
 that WebAssembly's 128-bit vector value, added by the SIMD operation extension
 proposal, does not store their shape information in the type. WebAssembly's
 design gives us two choices in SableWasm when designing a type system for vector
@@ -98,7 +101,8 @@ WebAssembly's specification. We always store the value using the little-endian
 method and the vectors start their first lane from the least significant bit.
 
 In this section, we talked about the type inference pass in SableWasm MIR.
-Similar to the dominator analysis we seen in section 5.2.1, the type infer pass
+Similar to the dominator analysis we seen in
+section~\ref{section:mir-opt-dominator}, the type infer pass
 does not optimize the control flow graph. But they are critical in the backend
 when we lower the SableWasm MIR into LLVM. We will come back to this in detail
 in chapter~\ref{chapter:backend-and-runtime}.

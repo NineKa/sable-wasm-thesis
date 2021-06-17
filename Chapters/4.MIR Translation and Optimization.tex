@@ -2,13 +2,14 @@
 \label{chapter:mir-translation-optimization}
 
 The previous chapter presented the SableWasm middle-level intermediate
-representation (MIR), a static-single-assignment (SSA) control flow graph
+representation (MIR), a static-single-assignment (SSA) control flow graph (CFG)
 representation of a WebAssembly program. This chapter focuses on the translation
 strategy used when lowering WebAssembly into the SableWasm MIR. We will first
 start by presenting the translation patterns used and then discuss the analysis
 and optimization framework.
 
 \section{Translating WebAssembly to MIR}
+\label{section:mir-translation}
 
 In this section, we will cover the translation between WebAssembly bytecode and
 SableWasm MIR. We have covered the design of SableWasm MIR instructions
@@ -23,6 +24,7 @@ WebAssembly instructions that require reduction during translation.
 \input{Chapters/4.MIR/4.2.2.Instruction Reduction}
 
 \section{Analysis Framework}
+\label{section:mir-opt}
 
 \begin{figure}
     \centering

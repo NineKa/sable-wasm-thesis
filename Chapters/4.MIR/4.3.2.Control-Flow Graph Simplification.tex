@@ -1,18 +1,19 @@
 \subsection{Control-Flow Graph Simplification}
+\label{section:mir-opt-simplify-cfg}
 
-In section 5.1, we illustrated the translation rule from WebAssembly bytecode to
-SableWasm MIR. Unfortunately, the translation rules yield suboptimal control
-flow graphs. Hence, in this section, we will incrementally improve the control
-flow graphs by fixing several obvious issues we found, such as trivial $\phi$
-nodes and unnecessary branching. The control flow graph simplification also
-performs \emph{dead code elimination} and \emph{unreachable basic block
-    elimination}. This section presents the patterns, along with their
-transforming strategies used in SableWasm. The general design of the
-simplification pass is similar to what one would expect in a peephole optimizer
-\cite{peephole-opt}. It iterates through the control flow graph, scans for
-matched patterns, and if it finds any optimization opportunities it will apply
-transformation strategies immediately. In the future, one may generalize this
-simplification pass into a fully-featured peephole optimizer, using a
+In section~\ref{section:mir-translation}, we illustrated the translation rules
+from WebAssembly bytecode to SableWasm MIR. Unfortunately, the translation rules
+yield suboptimal control flow graphs. Hence, in this section, we will
+incrementally improve the control flow graphs by fixing several obvious issues
+we found, such as trivial $\phi$ nodes and unnecessary branching. The control
+flow graph simplification also performs \emph{dead code elimination} and
+\emph{unreachable basic block elimination}. This section presents the patterns,
+along with their transforming strategies used in SableWasm. The general design
+of the simplification pass is similar to what one would expect in a peephole
+optimizer \cite{peephole-opt}. It iterates through the control flow graph, scans
+for matched patterns, and if it finds any optimization opportunities it will
+apply transformation strategies immediately. In the future, one may generalize
+this simplification pass into a fully-featured peephole optimizer, using a
 domain-specific language for patterns similar to Alive
 \cite{alive, alive-in-lean} for LLVM to ensure extensibility and correctness of
 the patterns. The simplification pass will terminate once the execution reaches
@@ -38,7 +39,8 @@ a fixed point, where there are no more optimization opportunities.
 \paragraph{Trivial $\phi$ nodes}
 The first pattern we found in generated SableWasm MIR is the trivial $\phi$
 nodes. Trivial $\phi$ nodes refer to the $\phi$ nodes with only one candidate
-value. In section 5.1.1, we present the translation patterns for \texttt{loop}
+value. In section~\ref{section:mir-translation-cfg-construct}, we present the
+translation patterns for \texttt{loop}
 instructions in WebAssembly and mentioned that the pattern is suboptimal and
 will result in trivial $\phi$ nodes. A quick reminder, the \texttt{loop}
 instruction needs to insert $\phi$ nodes to the landing basic block, which

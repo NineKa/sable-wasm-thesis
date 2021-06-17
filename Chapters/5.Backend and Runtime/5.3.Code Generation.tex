@@ -1,4 +1,5 @@
 \section{Code Generation}
+\label{section:runtime-codegen}
 
 This section describes the code generation strategy used in the SableWasm LLVM
 backend. For most of the instructions, especially for SableWasm MIR numeric
@@ -95,7 +96,9 @@ $\text{\textbf{Fetching linear memory:}}$
 memory.guard %mem %offset $\Longrightarrow$
 call void @__sable_memory_guard(%__sable_memory_t* %mem, i32 %offset)
 \end{lstlisting}
-In section 6.1 and 6.2, we presented how the instance object manages the linear
+In section~\ref{section:runtime-instance-layout} and
+\ref{section:runtime-webassembly-entities}, we presented how the
+instance object manages the linear
 memory instance and several runtime functions that implement additional
 functionalities. The SableWasm backend code generator takes advantage of the
 design by mapping SableWasm linear memory manipulation instructions into builtin
@@ -193,7 +196,8 @@ call.indirect %table %index %expect_ty $\Longrightarrow$
 \end{lstlisting}
 The SableWasm backend code generator implements indirect function calls via a
 series of builtin function invocations. We have already presented the builtin
-function in section 6.2; hence, we will not show them in detail in this
+function in section~\ref{section:runtime-webassembly-entities}; hence, we will
+not show them in detail in this
 paragraph. The first step for calling an indirect function is to check if the
 index is within range by calling the \texttt{\_\_sable\_table\_guard} builtin
 function. If the index is within range, we then compare the expected function
@@ -202,7 +206,8 @@ type with the actual indirect function type with
 if the entry is a null function. If so, it will report an exception. The
 SableWasm backend code generator uses a similar technique to encode the
 expected function type into a null-terminated string, as we have seen in
-section 6.1. After we make sure the indirect function is valid, we can now
+section~\ref{section:runtime-instance-layout}. After we make sure the indirect
+function is valid, we can now
 fetch the context pointer and function address pointer by using two getter
 functions, \texttt{\_\_sable\_table\_context} and
 \texttt{\_\_sable\_table\_function}. Before we invoke the function, we need to
@@ -225,7 +230,8 @@ The last translation pattern we will cover in the section is the SIMD
 operations. For most of the SIMD operations, the SableWasm backend code
 generator maps to their LLVM counterparts. However, one challenge arises when
 translating SableWasm MIR into LLVM intermediate representation around the
-type system. In section 5.2.3, we presented the type system for SableWasm MIR.
+type system. In section~\ref{section:mir-opt-type-inference}, we presented the
+type system for SableWasm MIR.
 A quick reminder, the SableWasm MIR follows WebAssembly's design by erasing the
 shape information from the vector values, depending on instructions to
 interpret them correctly. However, LLVM intermediate representation does

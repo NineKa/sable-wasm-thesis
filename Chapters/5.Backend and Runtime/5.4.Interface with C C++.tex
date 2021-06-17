@@ -1,4 +1,6 @@
 \section{Interface with C/C++}
+\label{section:runtime-host-lang}
+
 The last section of this chapter will cover the interface between the generated
 shared library and the host languages. Currently, SableWasm only has a binder
 library for C/C++. However, the principle is relatively straightforward, and
@@ -7,7 +9,8 @@ the rest of the section, we will focus our discussion on the callee wrapper,
 WASI function implementations and error handling strategies.
 
 \paragraph{Callee wrapper}
-Section 6.2 mentioned that SableWasm stores a function instance as a pair of
+Section~\ref{section:runtime-instance-layout} mentioned that SableWasm stores a
+function instance as a pair of
 context pointer and function address pointer. Additionally, SableWasm also
 encodes the function types as null-terminated strings. However, all this
 information is only available to the host program at runtime. C/C++ is a
