@@ -14,11 +14,16 @@ source code line-by-line is not feasible, a nontrivial source-to-source
 compiler is needed due to the structural difference between native binaries and
 JavaScript source codes.
 
-To address these problems, the WebAssembly working group was established in
-2017, and purposed a new standard for distributing applications over the
-Internet. WebAssembly focuses on safety, performance, portability and module
-compactness. These properties also make it an interesting target for static
-execution, enabling sandboxed applications outside of browsers. To this end,
+To address these problems, the WebAssembly working group was established
+in 2017 and proposed a new standard for distributing applications over
+the Internet. WebAssembly focuses on safety, performance, portability
+and module compactness. These properties also make it an interesting
+target for static execution, enabling sandboxed applications outside of
+browsers. Although WebAssembly started as an intermediate format for
+distributing compiled programs over the Internet, it is not limited to
+the Web. The WebAssembly working group, in its famous WebAssembly introduction
+paper \cite{10.1145/3062341.3062363}, also shows that WebAssembly can serve as
+an open standard for embedding in a multi-contexts environment. To this end,
 the WebAssembly community further designed the WebAssembly System Interface
 (WASI), which provides a standardized interface for WebAssembly modules to
 access native features such as the file system.
@@ -36,7 +41,7 @@ future design changes.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{Images/design}
+    \includegraphics[width=0.95\textwidth]{Images/design}
     \caption{The SableWasm compiler and runtime}
     \label{fig:design}
 \end{figure}

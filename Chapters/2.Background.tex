@@ -2,8 +2,9 @@
 \label{chapter:background}
 
 This chapter provides background information that helps to understand the
-thesis. We first revisit the rise of asm.js and its toolchain, Emscripten,
-followed by an introduction to WebAssembly and its standardized
+thesis. We first revisit the rise of \emph{asm.js} and its toolchain,
+\emph{Emscripten},
+followed by an introduction to \emph{WebAssembly} and its standardized
 \emph{WebAssembly System Interface} (WASI). Finally, we will give a brief
 overview of the LLVM compilation framework.
 
@@ -139,7 +140,7 @@ also able to import and export entities by names. In
 figure~\ref{fig:adler-32-webassembly}, we define a \emph{function} and a
 \emph{linear memory} and export them under name \texttt{adler32} and
 \texttt{memory} respectively. WebAssembly functions can define an arbitrary
-number of local variables and possibly an empty sequence of instructions as the
+number of local variables and a possibly empty sequence of instructions as the
 body. All instruction operates over an implicitly declared stack. The
 control-flow will return from the function by either a \texttt{return}
 instruction or reaching the end of the body. WebAssembly linear memories have
